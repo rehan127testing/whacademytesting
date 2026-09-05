@@ -1,0 +1,208 @@
+/**
+ * games.js — W.H. Academy
+ * "Your Classes" hub. Browses the chapters a student is ENTITLED to see, then
+ * links into each chapter's self-contained folder for actual gameplay.
+ *
+ * Content now comes from the shared registry (content-registry.js) and is gated
+ * by the student's enrolledScope (scope.js) — the SAME two modules the dashboard
+ * uses, so both screens can never disagree about who sees what. A Class 9 Biology
+ * student sees Biology (and their other enrolled subjects); Chemistry never
+ * appears for them.
+ *
+ * Adding a new game is a one-line edit in content-registry.js (fill in the
+ * chapter's `game` url). No change here, and every already-enrolled student in
+ * that class/subject sees it immediately.
+ */
+(function () {
+  'use strict';
+
+  // Registry subject key -> the accent token name variables.css actually
+  // defines. These were not the same vocabulary: this map used to ask for
+  // --subject-math-primary and --subject-cs-primary, which do not exist, so
+  // every subject except Science silently lost its accent colour. Geography
+  // and History had no tokens defined at all until now.
+  //
+  // chapter-engine.js publishes the same map as WHA_ChapterEngine.SUBJECT_TOKEN
+  // and it is preferred when present. games.html does NOT load the engine, so
+  // in practice the literal below is what runs here — the two are kept in step
+  // by a test that fails if they disagree, not by the code itself.
+  var ACCENT = (window.WHA_ChapterEngine && window.WHA_ChapterEngine.SUBJECT_TOKEN) || {
+    phys: 'physics', chem: 'chemistry', bio: 'biology',
+    math: 'mathematics', cs: 'computerscience',
+    science: 'science', geography: 'geography', history: 'history'
+  };
+  var ICON = {
+    phys: '⚛️', chem: '🧪', bio: '🧬', math: '📐', cs: '💻',
+    science: '🔬', geography: '🌍', history: '📜'
+  };
+
+  var scopeCache = null;
+
+  /** Resolve the student's scope: cached dashboard first, else fetch it. */
+  async function resolveScope() {
+    if (scopeCache) return scopeCache;
+
+    var profile = null;
+    var cached = Storage.getCachedDashboard();
+    if (cached && cached.data && cached.data.profile) {
+      profile = cached.data.profile;
+    } else {
+      try {
+        var data = await Api.dashboard.compose();
+        Storage.setCachedDashboard(data);
+        profile = data.profile;
+      } catch (e) {
+        profile = null;
+      }
+    }
+    scopeCache = { profile: profile };
+    return scopeCache;
+  }
+
+  /** All chapters the student may see, flattened, each tagged with its subject. */
+  function entitledChapters(profile) {
+    if (!window.WHA_Scope || !window.WHA_CONTENT || !profile) return [];
+    var scope = window.WHA_Scope.parse(profile.enrolledScope);
+    var subjects = window.WHA_Scope.allowedSubjects(scope, window.WHA_CONTENT);
+
+    var rows = [];
+    subjects.forEach(function (subject) {
+      subject.chapters.forEach(function (ch) {
+        rows.push({
+          subjectKey: subject.key,
+          subjectName: subject.name,
+          classLevel: scope.classLevel,
+          title: ch.title,
+          n: ch.n,
+          game: ch.game,
+          notes: ch.notes,
+          quiz: ch.quiz
+        });
+      });
+    });
+    return rows;
+  }
+
+  function chapterCard(row) {
+    // An unmapped subject gets NO --subject-accent rather than a made-up one.
+    // Pointing the variable at a token that does not exist makes the whole
+    // declaration invalid, which is worse than letting the CSS fallback to
+    // --color-brand-ink do its job.
+    var accent = ACCENT[row.subjectKey] || null;
+    var accentStyle = accent
+      ? '--subject-accent: var(--subject-' + accent + '-primary); --subject-accent-tint: var(--subject-' + accent + '-secondary);'
+      : '';
+    var playable = !!row.game;
+
+    var children = [
+      Utils.createEl('div', { class: 'card--nav__icon' }, [
+        Utils.createEl('span', { 'aria-hidden': 'true', text: ICON[row.subjectKey] || '📘' })
+      ]),
+      Utils.createEl('div', { class: 'card--nav__body' }, [
+        Utils.createEl('p', { class: 'card--nav__title', text: row.title }),
+        Utils.createEl('p', { class: 'card--nav__meta',
+          text: 'Class ' + row.classLevel + ' · ' + row.subjectName })
+      ])
+    ];
+
+    if (playable) {
+      return Utils.createEl('a', {
+        class: 'card card--nav card--interactive',
+        href: row.game,
+        style: accentStyle
+      }, children);
+    }
+    // Not yet playable — a visible, greyed card labelled with its status.
+    children.push(Utils.createEl('span', { class: 'badge', style: 'margin-left:auto;', text: 'Coming soon' }));
+    return Utils.createEl('div', { class: 'card card--nav', style: 'opacity:0.55;' }, children);
+  }
+
+  /** Group the (already-filtered) rows into per-subject buckets, preserving the
+   *  order subjects first appear in — which is the registry's subject order. */
+  function groupBySubject(rows) {
+    var order = [];
+    var buckets = {};
+    rows.forEach(function (r) {
+      if (!buckets[r.subjectKey]) {
+        buckets[r.subjectKey] = { key: r.subjectKey, name: r.subjectName, classLevel: r.classLevel, rows: [] };
+        order.push(r.subjectKey);
+      }
+      buckets[r.subjectKey].rows.push(r);
+    });
+    return order.map(function (k) { return buckets[k]; });
+  }
+
+  /** A subject section: labelled header + its own chapter grid underneath. */
+  function subjectSection(group) {
+    var accent = ACCENT[group.key] || null;
+    var accentStyle = accent
+      ? '--subject-accent: var(--subject-' + accent + '-primary); --subject-accent-tint: var(--subject-' + accent + '-secondary);'
+      : '';
+
+    // Playable chapters first within each subject.
+    var rows = group.rows.slice().sort(function (a, b) { return (b.game ? 1 : 0) - (a.game ? 1 : 0); });
+    var playableCount = rows.filter(function (r) { return !!r.game; }).length;
+
+    var grid = Utils.createEl('div', { class: 'card-grid' },
+      rows.map(function (r) { return chapterCard(r); }));
+
+    var header = Utils.createEl('div', { class: 'subject-group__head', style: accentStyle }, [
+      Utils.createEl('span', { class: 'subject-group__icon', 'aria-hidden': 'true',
+        text: ICON[group.key] || '📘' }),
+      Utils.createEl('div', { class: 'subject-group__titles' }, [
+        Utils.createEl('h2', { class: 'subject-group__name', text: group.name }),
+        Utils.createEl('p', { class: 'subject-group__meta',
+          text: 'Class ' + group.classLevel + ' · ' + rows.length + ' chapters' +
+                (playableCount ? ' · ' + playableCount + ' ready to play' : '') })
+      ])
+    ]);
+
+    return Utils.createEl('section', { class: 'subject-group', style: accentStyle }, [header, grid]);
+  }
+
+  function renderGrid(rows, filterText) {
+    var container = Utils.qs('#chapters-grid');
+    if (!container) return;
+    container.innerHTML = '';
+
+    var query = (filterText || '').toLowerCase();
+    var matches = rows.filter(function (r) {
+      return !query ||
+        r.title.toLowerCase().indexOf(query) !== -1 ||
+        r.subjectName.toLowerCase().indexOf(query) !== -1;
+    });
+
+    if (matches.length === 0) {
+      container.appendChild(Utils.createEl('div', { class: 'empty-state' }, [
+        Utils.createEl('p', { class: 'empty-state__title',
+          text: rows.length === 0 ? 'No classes yet' : 'No chapters found' }),
+        Utils.createEl('p', {
+          text: rows.length === 0
+            ? 'Your enrolled subjects will appear here once content is ready.'
+            : 'Try a different search term.' })
+      ]));
+      return;
+    }
+
+    // One section per subject, subjects in registry order, chapters grouped inside.
+    groupBySubject(matches).forEach(function (group) {
+      container.appendChild(subjectSection(group));
+    });
+  }
+
+  function initSearch(rows) {
+    var searchInput = Utils.qs('#chapter-search');
+    if (searchInput) {
+      searchInput.addEventListener('input',
+        Utils.debounce(function (e) { renderGrid(rows, e.target.value); }, 200));
+    }
+  }
+
+  document.addEventListener('wha:ready', async function () {
+    if (Router.currentPageName() !== 'games.html') return;
+    var ctx = await resolveScope();
+    var rows = entitledChapters(ctx.profile);
+    renderGrid(rows, '');
+    initSearch(rows);
+  });
+})();

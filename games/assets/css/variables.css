@@ -1,0 +1,502 @@
+/* ============================================================================
+   W.H. Academy — Learning Games — Design Tokens
+   ----------------------------------------------------------------------------
+   RETHEMED to match the main W.H. Academy website exactly. Palette, fonts,
+   shadows and glassmorphism are lifted straight from the main site's :root, so
+   the games platform reads as the same product, not a separate app.
+
+   LIGHT BY DEFAULT, ALWAYS. There is deliberately NO
+   `prefers-color-scheme: dark` auto-switch — the previous version had one,
+   which is exactly why the platform turned dark by itself on devices set to
+   dark mode. The main website has no dark mode, so neither does this.
+   Dark mode now only applies if the person explicitly turns it on.
+   ========================================================================== */
+
+:root {
+  /* ---- Brand (from the main site) ---- */
+  --brand-primary: #3730a3;
+  --brand-primary-mid: #4f46e5;
+  --brand-primary-light: #818cf8;
+  --brand-glow: rgba(79, 70, 229, 0.35);
+  --brand-secondary: #0ea5e9;
+  --brand-accent: #f59e0b;
+  --brand-pink: #ec4899;
+
+  --color-brand-ink: #3730a3;
+  --color-brand-ink-light: #4f46e5;
+  --color-brand-ink-tint: #e8ecff;
+
+  /* ---- Subject accents — harmonised with the indigo/amber palette ---- */
+  --subject-science-primary: #0ea5e9;
+  --subject-science-secondary: #dbf0fd;
+  --subject-mathematics-primary: #4f46e5;
+  --subject-mathematics-secondary: #e4e3fb;
+  --subject-computerscience-primary: #0d9488;
+  --subject-computerscience-secondary: #d3f1ed;
+  /* Geography and History had no tokens at all, so those subjects fell back
+     to the brand indigo and were visually indistinguishable from Maths.
+     Cyan reads as maps and water; terracotta as excavated, older material. */
+  --subject-geography-primary: #0891b2;
+  --subject-geography-secondary: #d5f0f7;
+  --subject-history-primary: #c2410c;
+  --subject-history-secondary: #fbe3d5;
+  --subject-physics-primary: #e11d48;
+  --subject-physics-secondary: #fbdde4;
+  --subject-chemistry-primary: #7c3aed;
+  --subject-chemistry-secondary: #e9ddfd;
+  --subject-biology-primary: #10b981;
+  --subject-biology-secondary: #d4f3e7;
+  --subject-english-primary: #6366f1;
+  --subject-english-secondary: #e5e6fc;
+  --subject-urdu-primary: #be123c;
+  --subject-urdu-secondary: #fbdce3;
+  --subject-islamiat-primary: #b45309;
+  --subject-islamiat-secondary: #fbebd6;
+  --subject-pakistanstudies-primary: #047857;
+  --subject-pakistanstudies-secondary: #d2f0e4;
+
+  /* ---- Semantic ---- */
+  --color-success: #059669;
+  --color-success-surface: #d9f5ea;
+  --color-error: #e11d48;
+  --color-error-surface: #fde7ec;
+  --color-warning: #b45309;
+  --color-warning-surface: #fdf0dc;
+  --color-info: #3730a3;
+  --color-info-surface: #e8ecff;
+
+  /* ---- Neutral scale (slate ramp, matching the main site) ---- */
+  --neutral-0: #ffffff;
+  --neutral-50: #f8fafc;
+  --neutral-100: #f1f5f9;
+  --neutral-200: #e2e8f0;
+  --neutral-300: #cbd5e1;
+  --neutral-400: #94a3b8;
+  --neutral-500: #64748b;
+  --neutral-600: #475569;
+  --neutral-700: #334155;
+  --neutral-800: #1e293b;
+  --neutral-950: #0f172a;
+
+  /* ---- Surfaces (glassmorphism, exactly as the main site does it) ---- */
+  --color-bg-app: #f0f4ff;
+  --color-bg-surface: rgba(255, 255, 255, 0.78);
+  --color-bg-surface-solid: #ffffff;
+  --color-border: rgba(55, 48, 163, 0.10);
+  --color-border-strong: rgba(55, 48, 163, 0.20);
+  --glass-blur: saturate(150%) blur(14px);
+
+  /* ---- Text ---- */
+  --color-text-primary: #0f172a;
+  --color-text-secondary: #475569;
+  --color-text-placeholder: #94a3b8;
+
+  --color-interactive: #4f46e5;
+  --color-interactive-hover: #3730a3;
+
+  /* ---- Elevation ---- */
+  --elevation-flat: none;
+  --elevation-card: 0 4px 16px rgba(15, 23, 42, 0.04);
+  --elevation-raised: 0 10px 35px rgba(15, 23, 42, 0.07);
+  --elevation-overlay: 0 20px 60px rgba(15, 23, 42, 0.10);
+  --elevation-floating: 0 24px 70px rgba(15, 23, 42, 0.14);
+  --elevation-primary: 0 15px 40px rgba(79, 70, 229, 0.22);
+
+  /* ---- Radius (softer, matching the main site's rounded cards) ---- */
+  --radius-xs: 6px;
+  --radius-sm: 10px;
+  --radius-md: 16px;
+  --radius-lg: 22px;
+  --radius-xl: 28px;
+  --radius-pill: 9999px;
+
+  /* ---- Spacing ---- */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 40px;
+  --space-8: 48px;
+  --space-9: 64px;
+  --space-10: 80px;
+  --space-11: 96px;
+
+  /* ---- Typography (the main site's exact pairing) ---- */
+  --font-display: 'Playfair Display', Georgia, serif;
+  --font-body: 'Plus Jakarta Sans', 'Segoe UI', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, 'Courier New', monospace;
+  --font-urdu-display: 'Noto Nastaliq Urdu', serif;
+  --font-urdu-body: 'Noto Naskh Urdu', serif;
+
+  --type-display: 700 42px/1.2 var(--font-display);
+  --type-h1: 800 32px/1.25 var(--font-body);
+  --type-h2: 700 25px/1.3 var(--font-body);
+  --type-h3: 700 20px/1.35 var(--font-body);
+  --type-h4: 700 17px/1.4 var(--font-body);
+  --type-body-lg: 400 17px/1.7 var(--font-body);
+  --type-body-md: 400 16px/1.65 var(--font-body);
+  --type-body-sm: 400 14px/1.6 var(--font-body);
+  --type-button-lg: 700 15px/1 var(--font-body);
+  --type-button-md: 700 13px/1 var(--font-body);
+  --type-caption: 700 11.5px/1.4 var(--font-body);
+
+  /* ---- Breakpoints ---- */
+  --breakpoint-tablet: 640px;
+  --breakpoint-desktop: 1024px;
+  --breakpoint-wide: 1440px;
+  --container-max: 1200px;
+
+  /* ---- Motion (the main site's easings) ---- */
+  --motion-instant: 100ms;
+  --motion-quick: 180ms;
+  --motion-standard: 260ms;
+  --motion-deliberate: 420ms;
+  --motion-celebration: 1000ms;
+  --ease-standard: cubic-bezier(0.25, 0.8, 0.25, 1);
+  --ease-out: cubic-bezier(0.25, 0.8, 0.25, 1);
+  --ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  --touch-target-min: 44px;
+
+  --z-dropdown: 100;
+  --z-sticky: 200;
+  --z-overlay-backdrop: 900;
+  --z-dialog: 1000;
+  --z-toast: 1100;
+  --z-skip-link: 1200;
+}
+
+/* ---- Optional dark mode — ONLY when explicitly turned on by the person.
+   Never applied automatically. Keyed to the same indigo family so it still
+   reads as W.H. Academy rather than a different product. ---- */
+[data-theme="dark"] {
+  --color-bg-app: #0e0d1f;
+  --color-bg-surface: rgba(30, 27, 75, 0.72);
+  --color-bg-surface-solid: #1e1b4b;
+  --color-text-primary: #eef1ff;
+  --color-text-secondary: #a5b0d0;
+  --color-text-placeholder: #6b7699;
+  --color-border: rgba(129, 140, 248, 0.18);
+  --color-border-strong: rgba(129, 140, 248, 0.32);
+
+  --color-brand-ink: #818cf8;
+  --color-brand-ink-light: #a5b4fc;
+  --color-brand-ink-tint: rgba(129, 140, 248, 0.14);
+  --color-interactive: #818cf8;
+  --color-interactive-hover: #a5b4fc;
+
+  --color-success: #34d399;
+  --color-success-surface: rgba(16, 185, 129, 0.15);
+  --color-error: #fb7185;
+  --color-error-surface: rgba(225, 29, 72, 0.16);
+  --color-warning: #fbbf24;
+  --color-warning-surface: rgba(180, 83, 9, 0.18);
+  --color-info: #818cf8;
+  --color-info-surface: rgba(129, 140, 248, 0.14);
+
+  --neutral-100: #262450;
+  --neutral-200: #322f63;
+  --neutral-300: #3f3b78;
+}
+
+/* ============================================================================
+   EXTRA THEMES — opt-in from Settings (like dark). Each keeps dark text on a
+   softly tinted light background and restyles the brand accent + gradients, so
+   the whole app (including the profile hero gradient) takes on the theme while
+   staying legible and unmistakably W.H. Academy.
+   ========================================================================== */
+
+/* ---- Ocean (calm blue / cyan) ---- */
+[data-theme="ocean"] {
+  --brand-primary: #0369a1;
+  --brand-primary-mid: #0ea5e9;
+  --brand-primary-light: #38bdf8;
+  --brand-glow: rgba(14, 165, 233, 0.35);
+  --brand-secondary: #06b6d4;
+  --color-brand-ink: #0369a1;
+  --color-brand-ink-light: #0ea5e9;
+  --color-brand-ink-tint: #dcefff;
+  --color-interactive: #0284c7;
+  --color-interactive-hover: #0369a1;
+  --color-info: #0369a1;
+  --color-info-surface: #dcefff;
+  --color-bg-app: #eef6ff;
+  --color-bg-surface: rgba(255, 255, 255, 0.82);
+  --color-border: rgba(3, 105, 161, 0.12);
+  --color-border-strong: rgba(3, 105, 161, 0.22);
+  --elevation-primary: 0 15px 40px rgba(14, 165, 233, 0.24);
+}
+
+/* ---- Forest (fresh green) ---- */
+[data-theme="forest"] {
+  --brand-primary: #15803d;
+  --brand-primary-mid: #22c55e;
+  --brand-primary-light: #4ade80;
+  --brand-glow: rgba(34, 197, 94, 0.32);
+  --brand-secondary: #10b981;
+  --color-brand-ink: #15803d;
+  --color-brand-ink-light: #16a34a;
+  --color-brand-ink-tint: #d7f5df;
+  --color-interactive: #16a34a;
+  --color-interactive-hover: #15803d;
+  --color-info: #15803d;
+  --color-info-surface: #d7f5df;
+  --color-bg-app: #eefaf1;
+  --color-bg-surface: rgba(255, 255, 255, 0.82);
+  --color-border: rgba(21, 128, 61, 0.12);
+  --color-border-strong: rgba(21, 128, 61, 0.22);
+  --elevation-primary: 0 15px 40px rgba(34, 197, 94, 0.22);
+}
+
+/* ---- Sunset (warm orange / pink) ---- */
+[data-theme="sunset"] {
+  --brand-primary: #c2410c;
+  --brand-primary-mid: #f97316;
+  --brand-primary-light: #fb923c;
+  --brand-glow: rgba(249, 115, 22, 0.32);
+  --brand-secondary: #ec4899;
+  --color-brand-ink: #c2410c;
+  --color-brand-ink-light: #ea580c;
+  --color-brand-ink-tint: #ffe4d3;
+  --color-interactive: #ea580c;
+  --color-interactive-hover: #c2410c;
+  --color-info: #c2410c;
+  --color-info-surface: #ffe4d3;
+  --color-bg-app: #fff3ec;
+  --color-bg-surface: rgba(255, 255, 255, 0.82);
+  --color-border: rgba(194, 65, 12, 0.12);
+  --color-border-strong: rgba(194, 65, 12, 0.22);
+  --elevation-primary: 0 15px 40px rgba(249, 115, 22, 0.24);
+}
+
+/* ---- Grape (rich violet / magenta gradient) ---- */
+[data-theme="grape"] {
+  --brand-primary: #6d28d9;
+  --brand-primary-mid: #8b5cf6;
+  --brand-primary-light: #a78bfa;
+  --brand-glow: rgba(139, 92, 246, 0.35);
+  --brand-secondary: #d946ef;
+  --color-brand-ink: #6d28d9;
+  --color-brand-ink-light: #7c3aed;
+  --color-brand-ink-tint: #ede4ff;
+  --color-interactive: #7c3aed;
+  --color-interactive-hover: #6d28d9;
+  --color-info: #6d28d9;
+  --color-info-surface: #ede4ff;
+  --color-bg-app: #f6f0ff;
+  --color-bg-surface: rgba(255, 255, 255, 0.82);
+  --color-border: rgba(109, 40, 217, 0.12);
+  --color-border-strong: rgba(109, 40, 217, 0.22);
+  --elevation-primary: 0 15px 40px rgba(139, 92, 246, 0.26);
+}
+
+/* ---- Rose (soft crimson / pink gradient) ---- */
+[data-theme="rose"] {
+  --brand-primary: #be123c;
+  --brand-primary-mid: #f43f5e;
+  --brand-primary-light: #fb7185;
+  --brand-glow: rgba(244, 63, 94, 0.32);
+  --brand-secondary: #fb7185;
+  --color-brand-ink: #be123c;
+  --color-brand-ink-light: #e11d48;
+  --color-brand-ink-tint: #ffe0e6;
+  --color-interactive: #e11d48;
+  --color-interactive-hover: #be123c;
+  --color-info: #be123c;
+  --color-info-surface: #ffe0e6;
+  --color-bg-app: #fff0f3;
+  --color-bg-surface: rgba(255, 255, 255, 0.84);
+  --color-border: rgba(190, 18, 60, 0.12);
+  --color-border-strong: rgba(190, 18, 60, 0.22);
+  --elevation-primary: 0 15px 40px rgba(244, 63, 94, 0.24);
+}
+
+/* ---- Candy (playful pink → violet gradient) ---- */
+[data-theme="candy"] {
+  --brand-primary: #db2777;
+  --brand-primary-mid: #ec4899;
+  --brand-primary-light: #f472b6;
+  --brand-glow: rgba(236, 72, 153, 0.34);
+  --brand-secondary: #8b5cf6;
+  --color-brand-ink: #be185d;
+  --color-brand-ink-light: #db2777;
+  --color-brand-ink-tint: #fbe0ef;
+  --color-interactive: #db2777;
+  --color-interactive-hover: #be185d;
+  --color-info: #be185d;
+  --color-info-surface: #fbe0ef;
+  --color-bg-app: #fdf1f8;
+  --color-bg-surface: rgba(255, 255, 255, 0.84);
+  --color-border: rgba(219, 39, 119, 0.12);
+  --color-border-strong: rgba(219, 39, 119, 0.22);
+  --elevation-primary: 0 15px 40px rgba(236, 72, 153, 0.26);
+}
+
+/* ---- Aurora (teal → emerald gradient) ---- */
+[data-theme="aurora"] {
+  --brand-primary: #0f766e;
+  --brand-primary-mid: #14b8a6;
+  --brand-primary-light: #2dd4bf;
+  --brand-glow: rgba(20, 184, 166, 0.32);
+  --brand-secondary: #22c55e;
+  --color-brand-ink: #0f766e;
+  --color-brand-ink-light: #0d9488;
+  --color-brand-ink-tint: #d1faf0;
+  --color-interactive: #0d9488;
+  --color-interactive-hover: #0f766e;
+  --color-info: #0f766e;
+  --color-info-surface: #d1faf0;
+  --color-bg-app: #ecfdf7;
+  --color-bg-surface: rgba(255, 255, 255, 0.84);
+  --color-border: rgba(15, 118, 110, 0.12);
+  --color-border-strong: rgba(15, 118, 110, 0.22);
+  --elevation-primary: 0 15px 40px rgba(20, 184, 166, 0.24);
+}
+
+/* ---- Gold (warm amber / honey gradient) ---- */
+[data-theme="gold"] {
+  --brand-primary: #a16207;
+  --brand-primary-mid: #f59e0b;
+  --brand-primary-light: #fbbf24;
+  --brand-glow: rgba(245, 158, 11, 0.34);
+  --brand-secondary: #f97316;
+  --color-brand-ink: #a16207;
+  --color-brand-ink-light: #ca8a04;
+  --color-brand-ink-tint: #fcefcf;
+  --color-interactive: #ca8a04;
+  --color-interactive-hover: #a16207;
+  --color-info: #a16207;
+  --color-info-surface: #fcefcf;
+  --color-bg-app: #fff8ec;
+  --color-bg-surface: rgba(255, 255, 255, 0.84);
+  --color-border: rgba(161, 98, 7, 0.12);
+  --color-border-strong: rgba(161, 98, 7, 0.22);
+  --elevation-primary: 0 15px 40px rgba(245, 158, 11, 0.26);
+}
+
+/* ---- Midnight (deep dark-blue gradient — a second dark option) ---- */
+[data-theme="midnight"] {
+  --color-bg-app: #0b1220;
+  --color-bg-surface: rgba(15, 23, 42, 0.72);
+  --color-bg-surface-solid: #0f172a;
+  --color-text-primary: #e8eeff;
+  --color-text-secondary: #9fb0d0;
+  --color-text-placeholder: #64748b;
+  --color-border: rgba(56, 189, 248, 0.18);
+  --color-border-strong: rgba(56, 189, 248, 0.32);
+
+  --brand-primary: #38bdf8;
+  --brand-primary-mid: #60a5fa;
+  --brand-primary-light: #93c5fd;
+  --brand-glow: rgba(56, 189, 248, 0.35);
+  --brand-secondary: #22d3ee;
+  --color-brand-ink: #7dd3fc;
+  --color-brand-ink-light: #bae6fd;
+  --color-brand-ink-tint: rgba(56, 189, 248, 0.14);
+  --color-interactive: #38bdf8;
+  --color-interactive-hover: #7dd3fc;
+
+  --color-success: #34d399;
+  --color-success-surface: rgba(16, 185, 129, 0.15);
+  --color-error: #fb7185;
+  --color-error-surface: rgba(225, 29, 72, 0.16);
+  --color-warning: #fbbf24;
+  --color-warning-surface: rgba(180, 83, 9, 0.18);
+  --color-info: #7dd3fc;
+  --color-info-surface: rgba(56, 189, 248, 0.14);
+
+  --neutral-100: #14203a;
+  --neutral-200: #1c2c4d;
+  --neutral-300: #274063;
+  --elevation-primary: 0 15px 40px rgba(56, 189, 248, 0.28);
+}
+
+/* ============================================================================
+   THEME BACKDROPS — each theme gets its own soft radial-gradient glow behind
+   the app, so switching themes changes the whole mood, not just the accent.
+   These override the default indigo/cyan/pink glow set on <body> in main.css.
+   ========================================================================== */
+[data-theme="ocean"] body {
+  background-image:
+    radial-gradient(circle at 12% 8%, rgba(14, 165, 233, 0.14), transparent 44%),
+    radial-gradient(circle at 88% 12%, rgba(6, 182, 212, 0.12), transparent 46%),
+    radial-gradient(circle at 50% 100%, rgba(59, 130, 246, 0.08), transparent 52%);
+}
+[data-theme="forest"] body {
+  background-image:
+    radial-gradient(circle at 12% 8%, rgba(34, 197, 94, 0.14), transparent 44%),
+    radial-gradient(circle at 88% 12%, rgba(16, 185, 129, 0.12), transparent 46%),
+    radial-gradient(circle at 50% 100%, rgba(132, 204, 22, 0.08), transparent 52%);
+}
+[data-theme="sunset"] body {
+  background-image:
+    radial-gradient(circle at 12% 8%, rgba(249, 115, 22, 0.16), transparent 44%),
+    radial-gradient(circle at 88% 12%, rgba(236, 72, 153, 0.12), transparent 46%),
+    radial-gradient(circle at 50% 100%, rgba(245, 158, 11, 0.10), transparent 52%);
+}
+[data-theme="grape"] body {
+  background-image:
+    radial-gradient(circle at 12% 8%, rgba(139, 92, 246, 0.16), transparent 44%),
+    radial-gradient(circle at 88% 12%, rgba(217, 70, 239, 0.12), transparent 46%),
+    radial-gradient(circle at 50% 100%, rgba(124, 58, 237, 0.10), transparent 52%);
+}
+[data-theme="rose"] body {
+  background-image:
+    radial-gradient(circle at 12% 8%, rgba(244, 63, 94, 0.14), transparent 44%),
+    radial-gradient(circle at 88% 12%, rgba(251, 113, 133, 0.12), transparent 46%),
+    radial-gradient(circle at 50% 100%, rgba(190, 18, 60, 0.08), transparent 52%);
+}
+[data-theme="candy"] body {
+  background-image:
+    radial-gradient(circle at 12% 8%, rgba(236, 72, 153, 0.16), transparent 44%),
+    radial-gradient(circle at 88% 12%, rgba(139, 92, 246, 0.14), transparent 46%),
+    radial-gradient(circle at 50% 100%, rgba(244, 114, 182, 0.10), transparent 52%);
+}
+[data-theme="aurora"] body {
+  background-image:
+    radial-gradient(circle at 12% 8%, rgba(20, 184, 166, 0.16), transparent 44%),
+    radial-gradient(circle at 88% 12%, rgba(34, 197, 94, 0.12), transparent 46%),
+    radial-gradient(circle at 50% 100%, rgba(45, 212, 191, 0.10), transparent 52%);
+}
+[data-theme="gold"] body {
+  background-image:
+    radial-gradient(circle at 12% 8%, rgba(245, 158, 11, 0.18), transparent 44%),
+    radial-gradient(circle at 88% 12%, rgba(249, 115, 22, 0.12), transparent 46%),
+    radial-gradient(circle at 50% 100%, rgba(251, 191, 36, 0.10), transparent 52%);
+}
+[data-theme="midnight"] body {
+  background-image:
+    radial-gradient(circle at 12% 8%, rgba(56, 189, 248, 0.16), transparent 46%),
+    radial-gradient(circle at 88% 12%, rgba(34, 211, 238, 0.12), transparent 48%),
+    radial-gradient(circle at 50% 100%, rgba(96, 165, 250, 0.10), transparent 54%);
+}
+
+/* ============================================================================
+   TEXT SIZE — actually resizes reading text (previously a no-op). Overrides the
+   type tokens so headings and body text scale together, plus a base bump.
+   ========================================================================== */
+html[data-text-size="large"] {
+  font-size: 17px;
+  --type-h1: 800 37px/1.25 var(--font-body);
+  --type-h2: 700 29px/1.3 var(--font-body);
+  --type-h3: 700 23px/1.35 var(--font-body);
+  --type-h4: 700 20px/1.4 var(--font-body);
+  --type-body-lg: 400 20px/1.7 var(--font-body);
+  --type-body-md: 400 18px/1.65 var(--font-body);
+  --type-body-sm: 400 16px/1.6 var(--font-body);
+  --type-display: 700 48px/1.2 var(--font-display);
+}
+html[data-text-size="larger"] {
+  font-size: 18px;
+  --type-h1: 800 42px/1.25 var(--font-body);
+  --type-h2: 700 33px/1.3 var(--font-body);
+  --type-h3: 700 26px/1.35 var(--font-body);
+  --type-h4: 700 22px/1.4 var(--font-body);
+  --type-body-lg: 400 22px/1.7 var(--font-body);
+  --type-body-md: 400 21px/1.65 var(--font-body);
+  --type-body-sm: 400 18px/1.6 var(--font-body);
+  --type-display: 700 54px/1.2 var(--font-display);
+}
