@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <!-- Audit S2 (CSP). GitHub Pages cannot send HTTP headers, so CSP is per-page.
+       frame-ancestors 'none' shuts clickjacking. 'unsafe-inline' kept for inline
+       <style>/<script>. Google Fonts allowed (main.css @imports them). connect-src allows the Apps Script API (script.google[usercontent].com) — the page's JS calls it at runtime, so this is required or every API call breaks. img is 'self' data:; widen with https: only if a remote image is ever added. -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data:; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://script.google.com https://script.googleusercontent.com">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Settings — W.H. Academy</title>
+  <meta name="theme-color" content="#3730a3">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="assets/icons/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="assets/css/variables.css">
+  <link rel="stylesheet" href="assets/css/main.css">
+  <link rel="stylesheet" href="assets/css/layout.css">
+  <link rel="stylesheet" href="assets/css/components.css">
+  <link rel="stylesheet" href="assets/css/animations.css">
+  <link rel="stylesheet" href="assets/css/responsive.css">
+  <link rel="stylesheet" href="assets/css/pages/settings.css">
+  <style>
+    /* The step containers use .stack (display:flex), which would otherwise beat
+       the [hidden] attribute — force hidden to win so the wizard shows one step
+       at a time. */
+    [hidden] { display: none !important; }
+  </style>
+</head>
+<body>
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+
+  <div class="app-shell app-shell--with-sidebar">
+    <nav class="sidebar" aria-label="Primary">
+      <a href="dashboard.html" class="top-bar__brand text-display">W.H. Academy</a>
+      <div class="sidebar__nav">
+        <a class="sidebar__item" href="dashboard.html" data-nav-page="dashboard.html">Dashboard</a>
+        <a class="sidebar__item" href="games.html" data-nav-page="games.html">Chapters</a>
+        <a class="sidebar__item" href="boss-battle.html" data-nav-page="boss-battle.html">
+          <svg viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3l7 3v5c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6l7-3z"/><path stroke-linecap="round" stroke-linejoin="round" d="M9.5 12l1.8 1.8L15 9.8"/></svg>
+          Boss Battle
+        </a>
+        <a class="sidebar__item" href="revision.html" data-nav-page="revision.html">Revision</a>
+        <a class="sidebar__item" href="leaderboard.html" data-nav-page="leaderboard.html">Ranks</a>
+        <a class="sidebar__item" href="profile.html" data-nav-page="profile.html">Profile</a>
+      </div>
+      <div style="margin-top:auto;">
+        <a class="sidebar__item" href="settings.html" data-nav-page="settings.html" aria-current="page">Settings</a>
+        <button class="sidebar__item" style="width:100%;" data-action="logout">Log Out</button>
+      </div>
+    </nav>
+
+    <div style="flex:1; min-width:0;">
+      <header class="top-bar hide-desktop">
+        <button class="btn btn--icon" onclick="history.back()" aria-label="Back"><svg viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg></button>
+        <span class="top-bar__brand">Settings</span>
+        <span></span>
+      </header>
+
+      <main id="main-content" class="app-main">
+        <div class="container section" style="max-width: 560px;">
+          <h1 class="hide-mobile">Settings</h1>
+
+          <form id="settings-form" class="stack-lg" style="margin-top: var(--space-5);">
+            <section>
+              <h2>Appearance</h2>
+              <div class="stack" style="margin-top: var(--space-3);">
+                <div class="field">
+                  <label class="field__label" for="setting-theme">Theme</label>
+                  <select class="select" id="setting-theme" name="theme">
+                    <option value="light">Light (default)</option>
+                    <option value="dark">Dark</option>
+                    <option value="midnight">Midnight (dark blue)</option>
+                    <option value="ocean">Ocean</option>
+                    <option value="aurora">Aurora (teal · green)</option>
+                    <option value="forest">Forest</option>
+                    <option value="gold">Gold</option>
+                    <option value="sunset">Sunset</option>
+                    <option value="rose">Rose</option>
+                    <option value="candy">Candy (pink · violet)</option>
+                    <option value="grape">Grape (violet)</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label class="field__label" for="setting-text-size">Text size</label>
+                  <select class="select" id="setting-text-size" name="textSize">
+                    <option value="default">Default</option>
+                    <option value="large">Large</option>
+                    <option value="larger">Larger</option>
+                  </select>
+                </div>
+              </div>
+            </section>
+
+          </form>
+
+          <section style="margin-top: var(--space-6);">
+            <h2>Account</h2>
+            <p class="text-body-sm">Change the PIN you use to sign in.</p>
+            <form id="change-pin-form" class="stack" style="margin-top: var(--space-3);">
+              <!-- Step 1: prove the current PIN, then we email a verification code. -->
+              <div id="pin-step-1" class="stack">
+                <div class="field">
+                  <label class="field__label" for="pin-current">Current PIN</label>
+                  <input class="input input--pin" id="pin-current" name="currentPin" type="password" inputmode="numeric" autocomplete="current-password" minlength="4" maxlength="8">
+                </div>
+                <button type="button" class="btn btn--primary" id="pin-send-code-btn" style="align-self:flex-start;">Send code to my email</button>
+              </div>
+
+              <!-- Step 2: enter the emailed code. -->
+              <div id="pin-step-2" class="stack" hidden>
+                <p class="text-body-sm" id="pin-code-note"></p>
+                <div class="field">
+                  <label class="field__label" for="pin-otp">Verification code</label>
+                  <input class="input" id="pin-otp" name="otpCode" inputmode="numeric" autocomplete="one-time-code">
+                </div>
+                <button type="button" class="btn btn--primary" id="pin-verify-btn" style="align-self:flex-start;">Verify code</button>
+              </div>
+
+              <!-- Step 3: set the new PIN. -->
+              <div id="pin-step-3" class="stack" hidden>
+                <div class="field">
+                  <label class="field__label" for="pin-new">New PIN</label>
+                  <input class="input input--pin" id="pin-new" name="newPin" type="password" inputmode="numeric" autocomplete="new-password" minlength="4" maxlength="8">
+                </div>
+                <div class="field">
+                  <label class="field__label" for="pin-confirm">Confirm new PIN</label>
+                  <input class="input input--pin" id="pin-confirm" name="confirmPin" type="password" inputmode="numeric" autocomplete="new-password" minlength="4" maxlength="8">
+                </div>
+                <button type="button" class="btn btn--primary" id="pin-change-btn" style="align-self:flex-start;">Change PIN</button>
+              </div>
+            </form>
+          </section>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <nav class="bottom-nav" aria-label="Primary">
+    <a class="bottom-nav__item" href="dashboard.html" data-nav-page="dashboard.html">Home</a>
+    <a class="bottom-nav__item" href="games.html" data-nav-page="games.html">Classes</a>
+    <a class="bottom-nav__item" href="boss-battle.html" data-nav-page="boss-battle.html">
+      <svg viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3l7 3v5c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6l7-3z"/></svg>
+      Boss
+    </a>
+    <a class="bottom-nav__item" href="revision.html" data-nav-page="revision.html">Revision</a>
+    <a class="bottom-nav__item" href="leaderboard.html" data-nav-page="leaderboard.html">Ranks</a>
+    <a class="bottom-nav__item" href="profile.html" data-nav-page="profile.html">Profile</a>
+  </nav>
+
+  <script src="assets/js/utils.js"></script>
+  <script src="assets/js/storage.js"></script>
+  <script src="assets/js/notifications.js"></script>
+  <script src="assets/js/animations.js"></script>
+  <script src="assets/js/api.js"></script>
+  <script src="assets/js/router.js"></script>
+  <script src="assets/js/app.js"></script>
+  <script src="assets/js/profile.js"></script>
+</body>
+</html>
