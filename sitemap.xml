@@ -1,0 +1,449 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+
+  <!-- Homepage -->
+  <url>
+    <loc>https://whacademypk.com/</loc>
+    <lastmod>2026-08-02</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+
+  <!-- Learning Games Platform -->
+  <url>
+    <loc>https://whacademypk.com/games/welcome.html</loc>
+    <lastmod>2026-07-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- Faculty Page -->
+  <url>
+    <loc>https://whacademypk.com/faculty.html</loc>
+    <lastmod>2026-06-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- CLASS 9 NOTES PAGES                                     -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+
+  <url>
+    <loc>https://whacademypk.com/notes/class-9/math/real-numbers.html</loc>
+    <lastmod>2026-06-26</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <url>
+    <loc>https://whacademypk.com/notes/class-9/physics/physical-quantities.html</loc>
+    <lastmod>2026-06-26</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <url>
+    <loc>https://whacademypk.com/notes/class-9/chemistry/nature-of-science.html</loc>
+    <lastmod>2026-06-26</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <url>
+    <loc>https://whacademypk.com/notes/class-9/biology/science-of-biology.html</loc>
+    <lastmod>2026-06-26</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <url>
+    <loc>https://whacademypk.com/notes/class-9/computer-science/computer-systems.html</loc>
+    <lastmod>2026-06-26</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- CLASS 8 NOTES PAGES                                     -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+
+
+  <url>
+    <loc>https://whacademypk.com/notes/class-8/science/human-nervous-system.html</loc>
+    <lastmod>2026-05-26</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://whacademypk.com/images/science_class8_ch2_img01.webp</image:loc>
+      <image:caption>Nervous System: CNS and PNS Overview — Class 8 Science</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://whacademypk.com/images/science_class8_ch2_img02.webp</image:loc>
+      <image:caption>The Human Brain: Three Main Divisions — Class 8 Science</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://whacademypk.com/images/science_class8_ch2_img07.webp</image:loc>
+      <image:caption>Structure of a Neuron (Nerve Cell) — Class 8 Science</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://whacademypk.com/images/science_class8_ch2_img09.webp</image:loc>
+      <image:caption>The Reflex Arc: Complete Pathway — Class 8 Science</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://whacademypk.com/notes/class-8/science/variations-heredity-cell-division.html</loc>
+    <lastmod>2026-08-26</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://whacademypk.com/notes/class-8/science/periodic-table.html</loc>
+    <lastmod>2026-08-31</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://whacademypk.com/notes/class-8/science/chemical-reactions.html</loc>
+    <lastmod>2026-08-31</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://whacademypk.com/notes/class-8/science/force-and-pressure.html</loc>
+    <lastmod>2026-09-02</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://whacademypk.com/notes/class-8/math/expansion-factorization.html</loc>
+    <lastmod>2026-05-26</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://whacademypk.com/images/math_class8_ch3_img01.webp</image:loc>
+      <image:caption>Further Expansion and Factorization of Algebraic Expressions — Class 8 Mathematics</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://whacademypk.com/notes/class-8/history/colonization.html</loc>
+    <lastmod>2026-05-26</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://whacademypk.com/images/history_class8_ch1_img01.webp</image:loc>
+      <image:caption>Colonization of the Subcontinent — Class 8 History</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://whacademypk.com/notes/class-8/history/reform-movements-muslim-revivalists.html</loc>
+    <lastmod>2026-09-03</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <url>
+    <loc>https://whacademypk.com/notes/class-8/history/world-at-war.html</loc>
+    <lastmod>2026-09-04</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <url>
+    <loc>https://whacademypk.com/notes/class-8/geography/oceans-seas.html</loc>
+    <lastmod>2026-05-26</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://whacademypk.com/images/geo_class8_ch1_img01.webp</image:loc>
+      <image:caption>The World's Five Oceans — Class 8 Geography</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://whacademypk.com/images/geo_class8_ch1_img02.webp</image:loc>
+      <image:caption>The River Indus System: Tributaries and Delta — Class 8 Geography</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://whacademypk.com/images/geo_class8_ch1_img03.webp</image:loc>
+      <image:caption>The Hydrological (Water) Cycle — Class 8 Geography</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://whacademypk.com/images/geo_class8_ch1_img04.webp</image:loc>
+      <image:caption>World Ocean Currents: Warm and Cold — Class 8 Geography</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://whacademypk.com/notes/class-8/geography/living-with-the-climate.html</loc>
+    <lastmod>2026-09-04</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://whacademypk.com/notes/class-8/geography/social-economic-development.html</loc>
+    <lastmod>2026-09-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- CLASS 7 NOTES PAGES                                     -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+
+  <url>
+    <loc>https://whacademypk.com/notes/class-7/math/real-numbers-approximation.html</loc>
+    <lastmod>2026-05-24</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <url>
+    <loc>https://whacademypk.com/notes/class-7/science/plant-systems.html</loc>
+    <lastmod>2026-05-24</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <url>
+    <loc>https://whacademypk.com/notes/class-7/geography/plains-rivers.html</loc>
+    <lastmod>2026-05-24</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://whacademypk.com/images/geography/geo_ch1_img01.webp</image:loc>
+      <image:caption>Plains and Rivers — Our Lifelines</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://whacademypk.com/images/geography/geo_ch1_img02.webp</image:loc>
+      <image:caption>Types of Plains</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://whacademypk.com/images/geography/geo_ch1_img03.webp</image:loc>
+      <image:caption>Classification of Plains by Formation</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://whacademypk.com/notes/class-7/history/middle-ages.html</loc>
+    <lastmod>2026-05-24</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://whacademypk.com/images/history/hist_ch1_img01.webp</image:loc>
+      <image:caption>Introduction to Ancient Civilisations</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://whacademypk.com/images/history/hist_ch1_img03.webp</image:loc>
+      <image:caption>The Feudal System — Social Hierarchy</image:caption>
+    </image:image>
+  </url>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- CLASS 6 NOTES PAGES — CORRECTED FILENAMES              -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+
+  <url>
+    <loc>https://whacademypk.com/notes/class-6/math/primes-hcf-lcm-integers.html</loc>
+    <lastmod>2026-05-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://whacademypk.com/notes/class-6/science/cellular-organization.html</loc>
+    <lastmod>2026-05-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://whacademypk.com/notes/class-6/geography/structure-earth-rocks.html</loc>
+    <lastmod>2026-05-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://whacademypk.com/notes/class-6/history/mesopotamia.html</loc>
+    <lastmod>2026-05-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- LEGAL PAGES                                             -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+
+  <url>
+    <loc>https://whacademypk.com/privacy-policy.html</loc>
+    <lastmod>2026-05-17</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+
+  <url>
+    <loc>https://whacademypk.com/terms.html</loc>
+    <lastmod>2026-05-17</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+
+  <url>
+    <loc>https://whacademypk.com/notes/</loc>
+    <lastmod>2026-08-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://whacademypk.com/notes/class-6/</loc>
+    <lastmod>2026-08-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://whacademypk.com/notes/class-6/math/</loc>
+    <lastmod>2026-08-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://whacademypk.com/notes/class-6/science/</loc>
+    <lastmod>2026-08-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://whacademypk.com/notes/class-6/geography/</loc>
+    <lastmod>2026-08-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://whacademypk.com/notes/class-6/history/</loc>
+    <lastmod>2026-08-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://whacademypk.com/notes/class-7/</loc>
+    <lastmod>2026-08-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://whacademypk.com/notes/class-7/math/</loc>
+    <lastmod>2026-08-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://whacademypk.com/notes/class-7/science/</loc>
+    <lastmod>2026-08-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://whacademypk.com/notes/class-7/geography/</loc>
+    <lastmod>2026-08-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://whacademypk.com/notes/class-7/history/</loc>
+    <lastmod>2026-08-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://whacademypk.com/notes/class-8/</loc>
+    <lastmod>2026-08-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://whacademypk.com/notes/class-8/math/</loc>
+    <lastmod>2026-08-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://whacademypk.com/notes/class-8/science/</loc>
+    <lastmod>2026-08-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://whacademypk.com/notes/class-8/geography/</loc>
+    <lastmod>2026-08-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://whacademypk.com/notes/class-8/history/</loc>
+    <lastmod>2026-08-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://whacademypk.com/notes/class-9/</loc>
+    <lastmod>2026-08-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://whacademypk.com/notes/class-9/biology/</loc>
+    <lastmod>2026-08-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://whacademypk.com/notes/class-9/chemistry/</loc>
+    <lastmod>2026-08-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://whacademypk.com/notes/class-9/computer-science/</loc>
+    <lastmod>2026-08-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://whacademypk.com/notes/class-9/math/</loc>
+    <lastmod>2026-08-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://whacademypk.com/notes/class-9/physics/</loc>
+    <lastmod>2026-08-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://whacademypk.com/about.html</loc>
+    <lastmod>2026-08-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://whacademypk.com/online-tutoring.html</loc>
+    <lastmod>2026-08-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://whacademypk.com/home-tutoring-rawalpindi.html</loc>
+    <lastmod>2026-08-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://whacademypk.com/how-it-works.html</loc>
+    <lastmod>2026-08-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+</urlset>
