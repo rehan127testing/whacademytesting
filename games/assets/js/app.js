@@ -107,6 +107,49 @@
     });
   }
 
+
+  let surfaceObserver = null;
+  let surfaceQueued = false;
+
+  function surfaceSaturation(c){
+    if(!c)return 1;
+    const mx=Math.max(c.r,c.g,c.b), mn=Math.min(c.r,c.g,c.b);
+    return mx===0?0:(mx-mn)/mx;
+  }
+  function normalizeStudentSurfaces(){
+    const theme=document.documentElement.getAttribute('data-theme')||'light';
+    document.querySelectorAll('.wha-student-auto-surface,.wha-student-auto-control').forEach(el=>{
+      el.classList.remove('wha-student-auto-surface','wha-student-auto-control');
+    });
+    if(theme==='light')return;
+    document.querySelectorAll('article,section,div,table,thead,tbody,tr,td,th,input,select,textarea,button').forEach(el=>{
+      if(!(el instanceof HTMLElement))return;
+      if(el.closest('.sidebar,[class*="modal"],[class*="dialog"]'))return;
+      const cs=getComputedStyle(el);
+      const bg=rgbParts(cs.backgroundColor);
+      if(!bg||bg.a<.65)return;
+      if(relativeLuminance(bg)<.82 || surfaceSaturation(bg)>.18)return;
+      const tag=el.tagName.toLowerCase();
+      if(['input','select','textarea','button'].includes(tag)){
+        el.classList.add('wha-student-auto-control');
+      }else{
+        const r=el.getBoundingClientRect();
+        if(r.width>110 && r.height>34)el.classList.add('wha-student-auto-surface');
+      }
+    });
+  }
+  function queueStudentSurfaceNormalize(){
+    if(surfaceQueued)return;
+    surfaceQueued=true;
+    requestAnimationFrame(()=>{surfaceQueued=false;normalizeStudentSurfaces();});
+  }
+  function watchStudentSurfaces(){
+    if(surfaceObserver)return;
+    surfaceObserver=new MutationObserver(queueStudentSurfaceNormalize);
+    surfaceObserver.observe(document.body,{childList:true,subtree:true});
+    queueStudentSurfaceNormalize();
+  }
+
   let contrastObserver = null;
   let contrastQueued = false;
 
@@ -210,6 +253,7 @@
     });
     queueMidnightContrastFix();
     requestAnimationFrame(fixThemeContrast);
+    queueStudentSurfaceNormalize();
   }
 
   function applySettings() {
@@ -221,6 +265,7 @@
     updateThemeButtonLabels();
     queueMidnightContrastFix();
     requestAnimationFrame(fixThemeContrast);
+    queueStudentSurfaceNormalize();
   }
 
   function cycleTheme() {
@@ -383,6 +428,7 @@
     wireCommonChrome();
     updateThemeButtonLabels();
     watchMidnightContrast();
+    watchStudentSurfaces();
 
     showOfflineIndicator();
     window.addEventListener('online', showOfflineIndicator);

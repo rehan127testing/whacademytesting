@@ -449,3 +449,27 @@ select {
   color:#f8fafc!important;
   text-shadow:none!important;
 }
+
+
+/* 2026-09-16 — Student eye-comfort + full-theme surface polish */
+[data-theme="light"]{
+  --color-bg-app:#eaf0f6;--color-bg-surface:#f6f8fb;--color-bg-surface-solid:#f6f8fb;
+  --color-bg-surface-muted:#edf2f7;--color-text-primary:#17243b;--color-text-secondary:#60708a;
+  --color-border:#cbd6e5;--color-border-strong:#b9c7d9
+}
+[data-theme="rose"]{--color-bg-app:#f3e9ee;--color-bg-surface:#faf5f7;--color-bg-surface-solid:#faf5f7}
+[data-theme="candy"]{--color-bg-app:#f2e9f3;--color-bg-surface:#faf6fb;--color-bg-surface-solid:#faf6fb}
+[data-theme="sky"]{--color-bg-app:#e8eef7;--color-bg-surface:#f6f8fb;--color-bg-surface-solid:#f6f8fb}
+[data-theme="mint"]{--color-bg-app:#e7f1ed;--color-bg-surface:#f4f8f6;--color-bg-surface-solid:#f4f8f6}
+[data-theme="lavender"]{--color-bg-app:#ece9f4;--color-bg-surface:#f7f5fa;--color-bg-surface-solid:#f7f5fa}
+.wha-student-auto-surface{
+  background:var(--color-bg-surface-solid)!important;color:var(--color-text-primary)!important;border-color:var(--color-border)!important
+}
+.wha-student-auto-control{
+  background:var(--color-bg-surface-muted,var(--color-bg-surface-solid))!important;
+  color:var(--color-text-primary)!important;border-color:var(--color-border-strong,var(--color-border))!important
+}
+.wha-student-auto-surface :is(h1,h2,h3,h4,h5,h6,strong,label,span,p,small,td,th){color:inherit}
+:is([data-theme="dark"],[data-theme="midnight"],[data-theme="ocean"],[data-theme="aurora"],[data-theme="forest"],[data-theme="gold"],[data-theme="sunset"],[data-theme="grape"],[data-theme="ember"]) :is(select option,optgroup){
+  background:var(--color-bg-surface-solid)!important;color:var(--color-text-primary)!important
+}
