@@ -73,6 +73,110 @@
     });
   }
 
+
+  let contrastObserver = null;
+  let contrastQueued = false;
+
+  function rgbParts(value) {
+    const m = String(value || '').match(
+      /rgba?\(\s*([\d.]+)[,\s]+([\d.]+)[,\s]+([\d.]+)(?:[,\s/]+([\d.]+))?\s*\)/i
+    );
+    if (!m) return null;
+    return {
+      r: Number(m[1]),
+      g: Number(m[2]),
+      b: Number(m[3]),
+      a: m[4] == null ? 1 : Number(m[4])
+    };
+  }
+
+  function relativeLuminance(rgb) {
+    if (!rgb) return 0;
+    const linear = [rgb.r, rgb.g, rgb.b].map((v) => {
+      const c = v / 255;
+      return c <= 0.04045 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+    });
+    return 0.2126 * linear[0] + 0.7152 * linear[1] + 0.0722 * linear[2];
+  }
+
+  function elementHasOwnText(el) {
+    return Array.from(el.childNodes).some((node) =>
+      node.nodeType === Node.TEXT_NODE && String(node.textContent || '').trim()
+    );
+  }
+
+  function fixMidnightContrast() {
+    const root = document.documentElement;
+    const isMidnight = root.getAttribute('data-theme') === 'midnight';
+
+    // Remove temporary classes immediately outside Midnight.
+    if (!isMidnight) {
+      Utils.qsa('.wha-midnight-dark-ink').forEach((el) => {
+        el.classList.remove('wha-midnight-dark-ink');
+      });
+      return;
+    }
+
+    // Scan semantic/visual UI surfaces rather than changing Midnight globally.
+    // This catches pale Boss badge bars, badge-tier pills, before/after audit
+    // boxes, light status chips, and future light cards with the same problem.
+    const candidates = document.querySelectorAll([
+      '.badge',
+      '[class*="badge"]',
+      '[class*="pill"]',
+      '[class*="chip"]',
+      '[class*="tier"]',
+      '[class*="before"]',
+      '[class*="after"]',
+      '[class*="snapshot"]',
+      '[class*="score"]',
+      '[class*="progress"]',
+      '[class*="result"]'
+    ].join(','));
+
+    candidates.forEach((el) => {
+      if (!(el instanceof HTMLElement)) return;
+
+      const cs = getComputedStyle(el);
+      const bg = rgbParts(cs.backgroundColor);
+      const fg = rgbParts(cs.color);
+
+      if (!bg || bg.a < 0.55) {
+        el.classList.remove('wha-midnight-dark-ink');
+        return;
+      }
+
+      const bgLum = relativeLuminance(bg);
+      const fgLum = relativeLuminance(fg);
+
+      // Only fix the exact bad case: pale/light surface + pale/light text.
+      const needsDarkInk =
+        bgLum >= 0.70 &&
+        (fgLum >= 0.62 || elementHasOwnText(el));
+
+      el.classList.toggle('wha-midnight-dark-ink', needsDarkInk);
+    });
+  }
+
+  function queueMidnightContrastFix() {
+    if (contrastQueued) return;
+    contrastQueued = true;
+    requestAnimationFrame(() => {
+      contrastQueued = false;
+      fixMidnightContrast();
+    });
+  }
+
+  function watchMidnightContrast() {
+    if (contrastObserver) return;
+    contrastObserver = new MutationObserver(queueMidnightContrastFix);
+    contrastObserver.observe(document.body, {
+      childList: true,
+      subtree: true
+    });
+    queueMidnightContrastFix();
+  }
+
   function applySettings() {
     const settings = Storage.getSettings();
     const root = document.documentElement;
@@ -80,6 +184,7 @@
     root.setAttribute('data-theme', theme);
     root.setAttribute('data-text-size', settings.textSize || 'default');
     updateThemeButtonLabels();
+    queueMidnightContrastFix();
   }
 
   function cycleTheme() {
@@ -241,6 +346,7 @@
     ensureThemeOptions();
     wireCommonChrome();
     updateThemeButtonLabels();
+    watchMidnightContrast();
 
     showOfflineIndicator();
     window.addEventListener('online', showOfflineIndicator);

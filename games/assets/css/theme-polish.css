@@ -401,3 +401,38 @@ select {
 #setting-theme {
   min-width: 100%;
 }
+
+
+/* ---------------------------------------------------------------------------
+   6) Midnight readability guard
+   JavaScript adds this class ONLY when a UI surface is actually pale/light.
+   Midnight backgrounds/gradients are not changed.
+   ------------------------------------------------------------------------- */
+[data-theme="midnight"] .wha-midnight-dark-ink,
+[data-theme="midnight"] .wha-midnight-dark-ink * {
+  color: #172554 !important;
+  text-shadow: none !important;
+}
+
+/* Known audit cards are intentionally pale semantic colours in every theme.
+   Their text must remain dark in Midnight too. */
+[data-theme="midnight"] .rc-before,
+[data-theme="midnight"] .rc-before * {
+  color: #7f1d1d !important;
+}
+
+[data-theme="midnight"] .rc-after,
+[data-theme="midnight"] .rc-after * {
+  color: #065f46 !important;
+}
+
+/* Preserve coloured status-chip text where semantic chips already supply it. */
+[data-theme="midnight"] .rc-status--open {
+  color: #92400e !important;
+}
+[data-theme="midnight"] .rc-status--resolved {
+  color: #1e40af !important;
+}
+[data-theme="midnight"] .rc-status--confirmed {
+  color: #065f46 !important;
+}
