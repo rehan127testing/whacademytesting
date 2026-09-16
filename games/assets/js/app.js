@@ -58,6 +58,15 @@
     document.head.appendChild(link);
   }
 
+  function ensureExperienceStylesheet() {
+    if (document.querySelector('link[data-wha-experience-polish]')) return;
+    const link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = 'assets/css/experience-polish.css';
+    link.setAttribute('data-wha-experience-polish', 'true');
+    document.head.appendChild(link);
+  }
+
   function currentTheme() {
     const settings = Storage.getSettings();
     return VALID_THEMES.includes(settings.theme) ? settings.theme : 'light';
@@ -88,7 +97,6 @@
       el.classList.remove('wha-auto-contrast-dark','wha-auto-contrast-light');
     });
 
-    if(theme==='light')return;
 
     const candidates=document.querySelectorAll([
       '.badge','[class*="badge"]','[class*="pill"]','[class*="chip"]',
@@ -121,14 +129,13 @@
     document.querySelectorAll('.wha-student-auto-surface,.wha-student-auto-control').forEach(el=>{
       el.classList.remove('wha-student-auto-surface','wha-student-auto-control');
     });
-    if(theme==='light')return;
     document.querySelectorAll('article,section,div,table,thead,tbody,tr,td,th,input,select,textarea,button').forEach(el=>{
       if(!(el instanceof HTMLElement))return;
       if(el.closest('.sidebar,[class*="modal"],[class*="dialog"]'))return;
       const cs=getComputedStyle(el);
       const bg=rgbParts(cs.backgroundColor);
-      if(!bg||bg.a<.65)return;
-      if(relativeLuminance(bg)<.82 || surfaceSaturation(bg)>.18)return;
+      if(!bg||bg.a<.62)return;
+      if(relativeLuminance(bg)<.76 || surfaceSaturation(bg)>.24)return;
       const tag=el.tagName.toLowerCase();
       if(['input','select','textarea','button'].includes(tag)){
         el.classList.add('wha-student-auto-control');
@@ -419,6 +426,7 @@
 
   function init() {
     ensureThemeStylesheet();
+    ensureExperienceStylesheet();
     applySettings();
 
     if (!Router.guardAuthenticatedPage()) return;
