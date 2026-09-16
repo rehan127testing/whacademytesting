@@ -436,3 +436,16 @@ select {
 [data-theme="midnight"] .rc-status--confirmed {
   color: #065f46 !important;
 }
+
+
+/* 2026-09-16 — Cross-theme automatic readability guard */
+.wha-auto-contrast-dark,
+.wha-auto-contrast-dark *{
+  color:#172554!important;
+  text-shadow:none!important;
+}
+.wha-auto-contrast-light,
+.wha-auto-contrast-light *{
+  color:#f8fafc!important;
+  text-shadow:none!important;
+}

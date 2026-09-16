@@ -74,6 +74,39 @@
   }
 
 
+
+  function contrastRatio(a,b){
+    const hi=Math.max(a,b), lo=Math.min(a,b);
+    return (hi+.05)/(lo+.05);
+  }
+
+  function fixThemeContrast(){
+    const root=document.documentElement;
+    const theme=root.getAttribute('data-theme')||'light';
+
+    Utils.qsa('.wha-auto-contrast-dark,.wha-auto-contrast-light').forEach(el=>{
+      el.classList.remove('wha-auto-contrast-dark','wha-auto-contrast-light');
+    });
+
+    if(theme==='light')return;
+
+    const candidates=document.querySelectorAll([
+      '.badge','[class*="badge"]','[class*="pill"]','[class*="chip"]',
+      '[class*="tier"]','[class*="before"]','[class*="after"]',
+      '[class*="snapshot"]','[class*="score"]','[class*="result"]',
+      '[class*="status"]','[class*="progress"]'
+    ].join(','));
+
+    candidates.forEach(el=>{
+      if(!(el instanceof HTMLElement))return;
+      const cs=getComputedStyle(el), bg=rgbParts(cs.backgroundColor), fg=rgbParts(cs.color);
+      if(!bg||!fg||bg.a<.55)return;
+      const bl=relativeLuminance(bg), fl=relativeLuminance(fg);
+      if(contrastRatio(bl,fl)>=3.6)return;
+      el.classList.add(bl>.52?'wha-auto-contrast-dark':'wha-auto-contrast-light');
+    });
+  }
+
   let contrastObserver = null;
   let contrastQueued = false;
 
@@ -164,6 +197,7 @@
     requestAnimationFrame(() => {
       contrastQueued = false;
       fixMidnightContrast();
+      fixThemeContrast();
     });
   }
 
@@ -175,6 +209,7 @@
       subtree: true
     });
     queueMidnightContrastFix();
+    requestAnimationFrame(fixThemeContrast);
   }
 
   function applySettings() {
@@ -185,6 +220,7 @@
     root.setAttribute('data-text-size', settings.textSize || 'default');
     updateThemeButtonLabels();
     queueMidnightContrastFix();
+    requestAnimationFrame(fixThemeContrast);
   }
 
   function cycleTheme() {
