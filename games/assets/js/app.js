@@ -93,11 +93,6 @@
     const root=document.documentElement;
     const theme=root.getAttribute('data-theme')||'light';
 
-    Utils.qsa('.wha-auto-contrast-dark,.wha-auto-contrast-light').forEach(el=>{
-      el.classList.remove('wha-auto-contrast-dark','wha-auto-contrast-light');
-    });
-
-
     const candidates=document.querySelectorAll([
       '.badge','[class*="badge"]','[class*="pill"]','[class*="chip"]',
       '[class*="tier"]','[class*="before"]','[class*="after"]',
@@ -107,6 +102,7 @@
 
     candidates.forEach(el=>{
       if(!(el instanceof HTMLElement))return;
+      if(el.classList.contains('wha-auto-contrast-dark') || el.classList.contains('wha-auto-contrast-light'))return;
       const cs=getComputedStyle(el), bg=rgbParts(cs.backgroundColor), fg=rgbParts(cs.color);
       if(!bg||!fg||bg.a<.55)return;
       const bl=relativeLuminance(bg), fl=relativeLuminance(fg);
@@ -125,23 +121,24 @@
     return mx===0?0:(mx-mn)/mx;
   }
   function normalizeStudentSurfaces(){
-    const theme=document.documentElement.getAttribute('data-theme')||'light';
-    document.querySelectorAll('.wha-student-auto-surface,.wha-student-auto-control').forEach(el=>{
-      el.classList.remove('wha-student-auto-surface','wha-student-auto-control');
-    });
-    document.querySelectorAll('article,section,div,table,thead,tbody,tr,td,th,input,select,textarea,button').forEach(el=>{
+    document.querySelectorAll(
+      'main,form,fieldset,article,section,header,footer,div,table,thead,tbody,tr,td,th,input,select,textarea,button'
+    ).forEach(el=>{
       if(!(el instanceof HTMLElement))return;
       if(el.closest('.sidebar,[class*="modal"],[class*="dialog"]'))return;
+      if(el.classList.contains('wha-student-auto-surface') || el.classList.contains('wha-student-auto-control'))return;
+
       const cs=getComputedStyle(el);
       const bg=rgbParts(cs.backgroundColor);
       if(!bg||bg.a<.62)return;
       if(relativeLuminance(bg)<.76 || surfaceSaturation(bg)>.24)return;
+
       const tag=el.tagName.toLowerCase();
       if(['input','select','textarea','button'].includes(tag)){
         el.classList.add('wha-student-auto-control');
       }else{
         const r=el.getBoundingClientRect();
-        if(r.width>110 && r.height>34)el.classList.add('wha-student-auto-surface');
+        if(r.width>90 && r.height>28)el.classList.add('wha-student-auto-surface');
       }
     });
   }
@@ -267,7 +264,13 @@
     const settings = Storage.getSettings();
     const root = document.documentElement;
     const theme = VALID_THEMES.includes(settings.theme) ? settings.theme : 'light';
+    const previousTheme = root.getAttribute('data-theme') || '';
     root.setAttribute('data-theme', theme);
+    if(previousTheme !== theme){
+      Utils.qsa('.wha-auto-contrast-dark,.wha-auto-contrast-light,.wha-midnight-dark-ink').forEach(el=>{
+        el.classList.remove('wha-auto-contrast-dark','wha-auto-contrast-light','wha-midnight-dark-ink');
+      });
+    }
     root.setAttribute('data-text-size', settings.textSize || 'default');
     updateThemeButtonLabels();
     queueMidnightContrastFix();

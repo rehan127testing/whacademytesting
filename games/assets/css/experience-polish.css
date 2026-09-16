@@ -47,7 +47,6 @@
   color:var(--color-text-primary)!important;
   border-color:var(--color-border)!important;
   box-shadow:0 10px 28px color-mix(in srgb,var(--brand-primary) 5%,transparent);
-  animation:whaStudentSurfaceEnter .36s var(--wha-ease) both
 }
 .wha-student-auto-control{
   background:var(--color-bg-surface-muted,var(--color-bg-surface-solid))!important;
