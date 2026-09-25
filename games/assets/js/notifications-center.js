@@ -80,36 +80,39 @@
     });
   }
 
-  function makeBellButton(extraClass) {
+  function makeBellButton() {
     const btn = document.createElement('button');
     btn.type = 'button';
-    btn.className = extraClass || 'sidebar__item wha-notification-trigger';
+    btn.className = 'wha-dashboard-notification-bell';
     btn.setAttribute('data-wha-notification-trigger', '1');
     btn.setAttribute('aria-label', 'Open notifications');
     btn.setAttribute('aria-haspopup', 'dialog');
-    btn.innerHTML = bellSvg +
-      '<span class="wha-notification-trigger__label">Notifications</span>' +
+    btn.title = 'Notifications';
+    btn.innerHTML =
+      '<span class="wha-dashboard-notification-bell__icon">' + bellSvg + '</span>' +
       '<span class="wha-notification-count" data-wha-notification-count hidden>0</span>';
     btn.addEventListener('click', openPanel);
     return btn;
   }
 
   function ensureTriggers() {
-    const nav = document.querySelector('.sidebar__nav');
-    if (nav && !nav.querySelector('[data-wha-notification-trigger]')) {
-      const btn = makeBellButton('sidebar__item wha-notification-trigger');
-      const profile = nav.querySelector('a[href$="profile.html"], a[data-nav-page="profile.html"]');
-      if (profile) nav.insertBefore(btn, profile);
-      else nav.appendChild(btn);
+    // Product decision (2026-09-25):
+    // Student Notification Center is represented by ONE familiar bell in the
+    // dashboard's top-right area. It must not appear as a sidebar navigation item.
+    if (Router.currentPageName() !== 'dashboard.html') return;
+    if (document.querySelector('[data-wha-notification-trigger]')) {
+      updateBadges();
+      return;
     }
 
-    document.querySelectorAll('.top-bar__actions').forEach((actions) => {
-      if (actions.querySelector('[data-wha-notification-trigger]')) return;
-      const btn = makeBellButton('btn btn--icon wha-notification-trigger wha-notification-trigger--mobile');
-      const label = btn.querySelector('.wha-notification-trigger__label');
-      if (label) label.classList.add('sr-only');
-      actions.insertBefore(btn, actions.firstChild);
-    });
+    const host = el('div', 'wha-dashboard-notification-host');
+    host.setAttribute('data-wha-notification-host', '1');
+    host.appendChild(makeBellButton());
+
+    // Insert inside the main dashboard surface when possible. The host itself is
+    // fixed to the viewport, so this remains stable across current dashboard markup.
+    const main = document.querySelector('main, .main-content, .dashboard, .content, body');
+    (main || document.body).appendChild(host);
 
     updateBadges();
   }

@@ -167,7 +167,7 @@
   }
 
   function startStudentSessionHeartbeat() {
-    if (!isProtectedStudentPage() || !Storage.getToken()) return;
+    if (!isProtectedStudentPage() || !Storage.getToken() || Router.currentPageName() !== 'dashboard.html') return;
 
     verifyStudentSessionNow();
 

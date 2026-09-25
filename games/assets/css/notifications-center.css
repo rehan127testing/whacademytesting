@@ -1,41 +1,89 @@
-/* W.H. Academy — Student Notification Center — STEP 18B — 2026-09-25 */
+/* W.H. Academy — Student Notification Center — dashboard top-right bell — 2026-09-25 */
 
-.wha-notification-trigger {
-  position: relative;
+.wha-dashboard-notification-host {
+  position: fixed;
+  top: 1rem;
+  right: 1.25rem;
+  z-index: 1200;
+  pointer-events: none;
 }
 
-.wha-notification-trigger svg {
-  flex: 0 0 auto;
+.wha-dashboard-notification-bell {
+  position: relative;
+  width: 2.85rem;
+  height: 2.85rem;
+  display: inline-grid;
+  place-items: center;
+  border: 1px solid var(--color-border, rgba(148, 163, 184, .35));
+  border-radius: 50%;
+  background: var(--color-surface, rgba(255,255,255,.96));
+  color: var(--color-text, #172033);
+  box-shadow: 0 8px 24px rgba(15, 23, 42, .12);
+  cursor: pointer;
+  pointer-events: auto;
+  transition: transform 160ms ease, box-shadow 160ms ease, background 160ms ease;
+}
+
+.wha-dashboard-notification-bell:hover,
+.wha-dashboard-notification-bell:focus-visible {
+  transform: translateY(-1px);
+  background: var(--color-surface-hover, rgba(248,250,252,.98));
+  box-shadow: 0 10px 28px rgba(15, 23, 42, .16);
+  outline: none;
+}
+
+.wha-dashboard-notification-bell:active {
+  transform: translateY(0) scale(.97);
+}
+
+.wha-dashboard-notification-bell__icon {
+  width: 1.25rem;
+  height: 1.25rem;
+  display: grid;
+  place-items: center;
+}
+
+.wha-dashboard-notification-bell__icon svg {
+  width: 100%;
+  height: 100%;
+  fill: none;
+  stroke: currentColor;
 }
 
 .wha-notification-count {
-  min-width: 1.25rem;
-  height: 1.25rem;
-  padding: 0 .34rem;
+  position: absolute;
+  top: -.3rem;
+  right: -.32rem;
+  min-width: 1.2rem;
+  height: 1.2rem;
+  padding: 0 .3rem;
   border-radius: 999px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  margin-left: auto;
-  font-size: .7rem;
+  font-size: .64rem;
   line-height: 1;
-  font-weight: 800;
+  font-weight: 900;
   font-variant-numeric: tabular-nums;
   background: #dc2626;
   color: #fff;
-  box-shadow: 0 0 0 2px var(--color-surface, rgba(255,255,255,.95));
+  box-shadow: 0 0 0 2px var(--color-surface, #fff);
 }
 
-.wha-notification-trigger--mobile .wha-notification-count {
-  position: absolute;
-  top: -.28rem;
-  right: -.28rem;
-  margin: 0;
-  min-width: 1.15rem;
-  height: 1.15rem;
-  padding: 0 .28rem;
-  font-size: .64rem;
-  box-shadow: 0 0 0 2px var(--color-surface, #fff);
+.wha-notification-count[hidden] {
+  display: none !important;
+}
+
+@media (max-width: 640px) {
+  .wha-dashboard-notification-host {
+    top: .75rem;
+    right: .85rem;
+  }
+
+  .wha-dashboard-notification-bell {
+    width: 2.65rem;
+    height: 2.65rem;
+  }
 }
 
 body.wha-notification-open {
