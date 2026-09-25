@@ -1,405 +1,72 @@
 /**
  * app.js — W.H. Academy
- * Shared student-app bootstrap.
- *
- * 2026-09-15 final navigation/theme stabilization:
- * - one canonical desktop sidebar on every student page
- * - Settings / Theme / Log Out always present
- * - theme button cycles a curated set; Settings exposes the full theme library
- * - theme-polish.css is injected app-wide so page-specific markup cannot drift
+ * Bootstraps every page: applies stored settings (theme, text size),
+ * enforces the auth guard, wires common chrome (nav, logout, offline
+ * indicator), and registers the service worker for offline support.
+ * Runs on every page via a single shared <script> include.
  */
 (function bootstrap() {
-  'use strict';
+  var VALID_THEMES = ['light', 'dark', 'ocean', 'forest', 'sunset',
+                      'grape', 'rose', 'candy', 'aurora', 'gold', 'midnight'];
 
-  const THEMES = {
-    light: 'Light',
-    dark: 'Dark',
-    midnight: 'Midnight',
-    ocean: 'Ocean',
-    aurora: 'Aurora',
-    forest: 'Forest',
-    gold: 'Gold',
-    sunset: 'Sunset',
-    rose: 'Rose',
-    candy: 'Candy',
-    grape: 'Grape',
-    sky: 'Sky',
-    mint: 'Mint',
-    lavender: 'Lavender',
-    ember: 'Ember'
-  };
-
-  const VALID_THEMES = Object.keys(THEMES);
-
-  // The sidebar button stays useful instead of requiring 15 clicks.
-  // Every theme is still available from Settings.
-  const QUICK_THEME_CYCLE = [
-    'light', 'grape', 'ocean', 'mint', 'sunset', 'midnight'
-  ];
-
-  const NAV_ITEMS = [
-    ['dashboard.html', 'Dashboard'],
-    ['games.html', 'Chapters'],
-    ['boss-battle.html', 'Boss Battle'],
-    ['badges.html', 'Badges'],
-    ['revision.html', 'Revision'],
-    ['leaderboard.html', 'Ranks'],
-    ['rechecking.html', 'Support & Rechecking'],
-    ['progress.html', 'My Progress'],
-    ['profile.html', 'Profile']
-  ];
-
-  function ensureThemeStylesheet() {
-    if (document.querySelector('link[data-wha-theme-polish]')) return;
-    const link = document.createElement('link');
-    link.rel = 'stylesheet';
-    link.href = 'assets/css/theme-polish.css';
-    link.setAttribute('data-wha-theme-polish', 'true');
-    document.head.appendChild(link);
-  }
-
-  function ensureExperienceStylesheet() {
-    if (document.querySelector('link[data-wha-experience-polish]')) return;
-    const link = document.createElement('link');
-    link.rel = 'stylesheet';
-    link.href = 'assets/css/experience-polish.css';
-    link.setAttribute('data-wha-experience-polish', 'true');
-    document.head.appendChild(link);
-  }
-
-  function currentTheme() {
-    const settings = Storage.getSettings();
-    return VALID_THEMES.includes(settings.theme) ? settings.theme : 'light';
-  }
-
-  function updateThemeButtonLabels() {
-    const theme = currentTheme();
-    Utils.qsa('[data-action="cycle-theme"]').forEach((btn) => {
-      const label = THEMES[theme] || 'Theme';
-      btn.textContent = 'Theme · ' + label;
-      btn.setAttribute('aria-label', 'Change theme. Current theme: ' + label);
-      btn.setAttribute('title', 'Current theme: ' + label);
-    });
-  }
-
-
-
-  function contrastRatio(a,b){
-    const hi=Math.max(a,b), lo=Math.min(a,b);
-    return (hi+.05)/(lo+.05);
-  }
-
-  function fixThemeContrast(){
-    const root=document.documentElement;
-    const theme=root.getAttribute('data-theme')||'light';
-
-    const candidates=document.querySelectorAll([
-      '.badge','[class*="badge"]','[class*="pill"]','[class*="chip"]',
-      '[class*="tier"]','[class*="before"]','[class*="after"]',
-      '[class*="snapshot"]','[class*="score"]','[class*="result"]',
-      '[class*="status"]','[class*="progress"]'
-    ].join(','));
-
-    candidates.forEach(el=>{
-      if(!(el instanceof HTMLElement))return;
-      if(el.classList.contains('wha-auto-contrast-dark') || el.classList.contains('wha-auto-contrast-light'))return;
-      const cs=getComputedStyle(el), bg=rgbParts(cs.backgroundColor), fg=rgbParts(cs.color);
-      if(!bg||!fg||bg.a<.55)return;
-      const bl=relativeLuminance(bg), fl=relativeLuminance(fg);
-      if(contrastRatio(bl,fl)>=3.6)return;
-      el.classList.add(bl>.52?'wha-auto-contrast-dark':'wha-auto-contrast-light');
-    });
-  }
-
-
-  let surfaceObserver = null;
-  let surfaceQueued = false;
-
-  function surfaceSaturation(c){
-    if(!c)return 1;
-    const mx=Math.max(c.r,c.g,c.b), mn=Math.min(c.r,c.g,c.b);
-    return mx===0?0:(mx-mn)/mx;
-  }
-  function normalizeStudentSurfaces(){
-    document.querySelectorAll(
-      'main,form,fieldset,article,section,header,footer,div,table,thead,tbody,tr,td,th,input,select,textarea,button'
-    ).forEach(el=>{
-      if(!(el instanceof HTMLElement))return;
-      if(el.closest('.sidebar,[class*="modal"],[class*="dialog"]'))return;
-      if(el.classList.contains('wha-student-auto-surface') || el.classList.contains('wha-student-auto-control'))return;
-
-      const cs=getComputedStyle(el);
-      const bg=rgbParts(cs.backgroundColor);
-      if(!bg||bg.a<.62)return;
-      if(relativeLuminance(bg)<.76 || surfaceSaturation(bg)>.24)return;
-
-      const tag=el.tagName.toLowerCase();
-      if(['input','select','textarea','button'].includes(tag)){
-        el.classList.add('wha-student-auto-control');
-      }else{
-        const r=el.getBoundingClientRect();
-        if(r.width>90 && r.height>28)el.classList.add('wha-student-auto-surface');
-      }
-    });
-  }
-  function queueStudentSurfaceNormalize(){
-    if(surfaceQueued)return;
-    surfaceQueued=true;
-    requestAnimationFrame(()=>{surfaceQueued=false;normalizeStudentSurfaces();});
-  }
-  function watchStudentSurfaces(){
-    if(surfaceObserver)return;
-    surfaceObserver=new MutationObserver(queueStudentSurfaceNormalize);
-    surfaceObserver.observe(document.body,{childList:true,subtree:true});
-    queueStudentSurfaceNormalize();
-  }
-
-  let contrastObserver = null;
-  let contrastQueued = false;
-
-  function rgbParts(value) {
-    const m = String(value || '').match(
-      /rgba?\(\s*([\d.]+)[,\s]+([\d.]+)[,\s]+([\d.]+)(?:[,\s/]+([\d.]+))?\s*\)/i
-    );
-    if (!m) return null;
-    return {
-      r: Number(m[1]),
-      g: Number(m[2]),
-      b: Number(m[3]),
-      a: m[4] == null ? 1 : Number(m[4])
-    };
-  }
-
-  function relativeLuminance(rgb) {
-    if (!rgb) return 0;
-    const linear = [rgb.r, rgb.g, rgb.b].map((v) => {
-      const c = v / 255;
-      return c <= 0.04045 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
-    });
-    return 0.2126 * linear[0] + 0.7152 * linear[1] + 0.0722 * linear[2];
-  }
-
-  function elementHasOwnText(el) {
-    return Array.from(el.childNodes).some((node) =>
-      node.nodeType === Node.TEXT_NODE && String(node.textContent || '').trim()
-    );
-  }
-
-  function fixMidnightContrast() {
-    const root = document.documentElement;
-    const isMidnight = root.getAttribute('data-theme') === 'midnight';
-
-    // Remove temporary classes immediately outside Midnight.
-    if (!isMidnight) {
-      Utils.qsa('.wha-midnight-dark-ink').forEach((el) => {
-        el.classList.remove('wha-midnight-dark-ink');
-      });
-      return;
-    }
-
-    // Scan semantic/visual UI surfaces rather than changing Midnight globally.
-    // This catches pale Boss badge bars, badge-tier pills, before/after audit
-    // boxes, light status chips, and future light cards with the same problem.
-    const candidates = document.querySelectorAll([
-      '.badge',
-      '[class*="badge"]',
-      '[class*="pill"]',
-      '[class*="chip"]',
-      '[class*="tier"]',
-      '[class*="before"]',
-      '[class*="after"]',
-      '[class*="snapshot"]',
-      '[class*="score"]',
-      '[class*="progress"]',
-      '[class*="result"]'
-    ].join(','));
-
-    candidates.forEach((el) => {
-      if (!(el instanceof HTMLElement)) return;
-
-      const cs = getComputedStyle(el);
-      const bg = rgbParts(cs.backgroundColor);
-      const fg = rgbParts(cs.color);
-
-      if (!bg || bg.a < 0.55) {
-        el.classList.remove('wha-midnight-dark-ink');
-        return;
-      }
-
-      const bgLum = relativeLuminance(bg);
-      const fgLum = relativeLuminance(fg);
-
-      // Only fix the exact bad case: pale/light surface + pale/light text.
-      const needsDarkInk =
-        bgLum >= 0.70 &&
-        (fgLum >= 0.62 || elementHasOwnText(el));
-
-      el.classList.toggle('wha-midnight-dark-ink', needsDarkInk);
-    });
-  }
-
-  function queueMidnightContrastFix() {
-    if (contrastQueued) return;
-    contrastQueued = true;
-    requestAnimationFrame(() => {
-      contrastQueued = false;
-      fixMidnightContrast();
-      fixThemeContrast();
-    });
-  }
-
-  function watchMidnightContrast() {
-    if (contrastObserver) return;
-    contrastObserver = new MutationObserver(queueMidnightContrastFix);
-    contrastObserver.observe(document.body, {
-      childList: true,
-      subtree: true
-    });
-    queueMidnightContrastFix();
-    requestAnimationFrame(fixThemeContrast);
-    queueStudentSurfaceNormalize();
-  }
+  // Account-status enforcement:
+  // v9.1 re-checks the student's enrollment on every protected backend request.
+  // This lightweight heartbeat makes the same rule take effect even when the
+  // student is sitting idle on a dashboard page and is not currently making
+  // another API request.
+  const SESSION_HEARTBEAT_MS = 10000;
+  let sessionCheckInFlight = false;
+  let sessionRedirecting = false;
+  let sessionHeartbeatTimer = null;
 
   function applySettings() {
     const settings = Storage.getSettings();
     const root = document.documentElement;
-    const theme = VALID_THEMES.includes(settings.theme) ? settings.theme : 'light';
-    const previousTheme = root.getAttribute('data-theme') || '';
+    const theme = VALID_THEMES.indexOf(settings.theme) >= 0 ? settings.theme : 'light';
     root.setAttribute('data-theme', theme);
-    if(previousTheme !== theme){
-      Utils.qsa('.wha-auto-contrast-dark,.wha-auto-contrast-light,.wha-midnight-dark-ink').forEach(el=>{
-        el.classList.remove('wha-auto-contrast-dark','wha-auto-contrast-light','wha-midnight-dark-ink');
-      });
-    }
     root.setAttribute('data-text-size', settings.textSize || 'default');
-    updateThemeButtonLabels();
-    queueMidnightContrastFix();
-    requestAnimationFrame(fixThemeContrast);
-    queueStudentSurfaceNormalize();
   }
 
-  function cycleTheme() {
-    const current = currentTheme();
-    const index = QUICK_THEME_CYCLE.indexOf(current);
-    const next = QUICK_THEME_CYCLE[(index >= 0 ? index + 1 : 0) % QUICK_THEME_CYCLE.length];
-    Storage.setSettings({ theme: next });
-    applySettings();
-
-    // Keep the Settings select synchronized when the user cycles while on that page.
-    const select = Utils.qs('#setting-theme');
-    if (select) select.value = next;
+  function supportNavMarkup() {
+    return '<svg viewBox="0 0 24 24" stroke-width="2" aria-hidden="true">' +
+      '<path stroke-linecap="round" stroke-linejoin="round" d="M4 5.5A2.5 2.5 0 016.5 3h11A2.5 2.5 0 0120 5.5v8a2.5 2.5 0 01-2.5 2.5H11l-4.5 4v-4A2.5 2.5 0 014 13.5v-8z"/>' +
+      '<path stroke-linecap="round" d="M8 8h8M8 11.5h5"/>' +
+      '</svg><span>Support &amp; Rechecking</span>';
   }
 
-  function navLink(page, label) {
-    return '<a class="sidebar__item" href="' + page + '" data-nav-page="' + page + '">' +
-      '<span class="sidebar__label">' + label + '</span>' +
-      '</a>';
-  }
-
-  function ensureCanonicalSidebar() {
-    const sidebar = Utils.qs('.sidebar');
-    if (!sidebar) return;
-
-    let brand = sidebar.querySelector('.top-bar__brand');
-    if (!brand) {
-      brand = document.createElement('a');
-      brand.className = 'top-bar__brand text-display';
-      brand.href = 'dashboard.html';
-      brand.textContent = 'W.H. Academy';
-      sidebar.prepend(brand);
+  function ensureSupportNav() {
+    const nav = Utils.qs('.sidebar__nav');
+    if (!nav) return;
+    let link = nav.querySelector('a[href$="rechecking.html"], a[data-nav-page="rechecking.html"]');
+    if (!link) {
+      link = document.createElement('a');
+      link.className = 'sidebar__item';
+      link.href = 'rechecking.html';
+      link.setAttribute('data-nav-page', 'rechecking.html');
+      link.innerHTML = supportNavMarkup();
+      const profileLink = nav.querySelector('a[href$="profile.html"], a[data-nav-page="profile.html"]');
+      if (profileLink) nav.insertBefore(link, profileLink);
+      else nav.appendChild(link);
     } else {
-      brand.href = 'dashboard.html';
-      brand.textContent = 'W.H. Academy';
+      link.classList.add('sidebar__item');
+      link.setAttribute('data-nav-page', 'rechecking.html');
+      link.innerHTML = supportNavMarkup();
     }
-
-    let nav = sidebar.querySelector('.sidebar__nav');
-    if (!nav) {
-      nav = document.createElement('div');
-      nav.className = 'sidebar__nav';
-      brand.insertAdjacentElement('afterend', nav);
-    }
-
-    // Rebuild, rather than patching page-by-page markup. This is what removes
-    // missing icons, duplicate icons and different tab order across pages.
-    nav.innerHTML = NAV_ITEMS.map((item) => navLink(item[0], item[1])).join('');
-
-    // Remove old per-page footer variants only if they contain common controls.
-    Array.from(sidebar.children).forEach((child) => {
-      if (child === brand || child === nav) return;
-      if (
-        child.classList?.contains('sidebar__footer') ||
-        child.querySelector?.('[data-action="logout"]') ||
-        child.querySelector?.('[data-action="toggle-theme"]') ||
-        child.querySelector?.('[data-action="cycle-theme"]') ||
-        child.querySelector?.('[data-nav-page="settings.html"]')
-      ) {
-        child.remove();
-      }
-    });
-
-    const footer = document.createElement('div');
-    footer.className = 'sidebar__footer';
-    footer.innerHTML =
-      '<a class="sidebar__item" href="settings.html" data-nav-page="settings.html">' +
-        '<span class="sidebar__label">Settings</span>' +
-      '</a>' +
-      '<button type="button" class="sidebar__item" data-action="cycle-theme"></button>' +
-      '<button type="button" class="sidebar__item" data-action="logout">' +
-        '<span class="sidebar__label">Log Out</span>' +
-      '</button>';
-
-    sidebar.appendChild(footer);
-    updateThemeButtonLabels();
-  }
-
-  function ensureThemeOptions() {
-    const select = Utils.qs('#setting-theme');
-    if (!select) return;
-
-    const order = [
-      'light', 'dark', 'midnight', 'ocean', 'sky', 'aurora', 'mint',
-      'forest', 'gold', 'sunset', 'ember', 'rose', 'candy', 'grape', 'lavender'
-    ];
-
-    const labels = {
-      light: 'Light (default)',
-      dark: 'Dark',
-      midnight: 'Midnight (dark blue)',
-      ocean: 'Ocean',
-      sky: 'Sky (blue · violet)',
-      aurora: 'Aurora (teal · green)',
-      mint: 'Mint (fresh green · cyan)',
-      forest: 'Forest',
-      gold: 'Gold',
-      sunset: 'Sunset',
-      ember: 'Ember (red · orange)',
-      rose: 'Rose',
-      candy: 'Candy (pink · violet)',
-      grape: 'Grape (violet)',
-      lavender: 'Lavender (soft purple)'
-    };
-
-    select.innerHTML = order.map((value) =>
-      '<option value="' + value + '">' + labels[value] + '</option>'
-    ).join('');
-
-    select.value = currentTheme();
   }
 
   function wireCommonChrome() {
-    Utils.qsa('[data-action="logout"]').forEach((logoutBtn) => {
-      if (logoutBtn.dataset.whaWired === '1') return;
-      logoutBtn.dataset.whaWired = '1';
-      logoutBtn.addEventListener('click', () => Router.logoutAndRedirect());
-    });
-
-    // Existing mobile/top-bar "toggle" controls now use the same curated cycle.
-    Utils.qsa('[data-action="toggle-theme"], [data-action="cycle-theme"]').forEach((themeBtn) => {
-      if (themeBtn.dataset.whaWired === '1') return;
-      themeBtn.dataset.whaWired = '1';
-      themeBtn.addEventListener('click', cycleTheme);
-    });
-
+    const logoutBtn = Utils.qs('[data-action="logout"]');
+    if (logoutBtn) logoutBtn.addEventListener('click', () => Router.logoutAndRedirect());
+    const themeToggle = Utils.qs('[data-action="toggle-theme"]');
+    if (themeToggle) {
+      themeToggle.addEventListener('click', () => {
+        const current = Storage.getSettings().theme;
+        const next = current === 'dark' ? 'light' : 'dark';
+        Storage.setSettings({ theme: next });
+        applySettings();
+      });
+    }
+    ensureSupportNav();
     Router.highlightActiveNav();
   }
 
@@ -427,31 +94,128 @@
     }
   }
 
+  function isProtectedStudentPage() {
+    const page = Router.currentPageName();
+    return !['welcome.html', 'login.html', 'chapter.html', 'admin.html', ''].includes(page);
+  }
+
+  function saveAccountStatusNotice(result) {
+    const message = String(
+      (result && result.errorMessage) ||
+      'Your W.H. Academy account is not currently active. Please contact W.H. Academy if you need help.'
+    );
+    Storage.set('auth_notice', {
+      kind: 'account-status',
+      message,
+      accountStatus: String((result && result.accountStatus) || ''),
+      studentVisibleReason: String((result && result.studentVisibleReason) || ''),
+      statusChangedAt: String((result && result.statusChangedAt) || ''),
+      savedAt: Date.now()
+    });
+  }
+
+  async function endStudentSession(result) {
+    if (sessionRedirecting) return;
+    sessionRedirecting = true;
+
+    const code = String((result && result.errorCode) || '');
+    const isAccountStatus = code === 'AUTH_002';
+
+    if (isAccountStatus) saveAccountStatusNotice(result);
+
+    const token = Storage.getToken();
+    if (token) {
+      // Best effort: revoke this browser's current JWT as well as clearing it
+      // locally. If the network drops, v9.1 still blocks the token server-side
+      // while the account is inactive.
+      try { await Api.auth.logout(token); } catch (e) {}
+    }
+
+    Storage.clearToken();
+    Storage.set('dashboard_cache', null);
+
+    const reason = isAccountStatus ? 'account-status' : 'expired';
+    window.location.replace('login.html?reason=' + encodeURIComponent(reason));
+  }
+
+  async function verifyStudentSessionNow() {
+    if (sessionRedirecting || sessionCheckInFlight) return;
+    if (!isProtectedStudentPage() || !Storage.getToken() || !navigator.onLine) return;
+
+    sessionCheckInFlight = true;
+    try {
+      const result = await Api.request('auth/verifySession', {});
+      if (result && result.isValid === false) {
+        await endStudentSession(result);
+      }
+    } catch (err) {
+      // auth/verifySession currently returns invalid-session details as data,
+      // but handle auth errors too so this remains safe if the backend envelope
+      // is tightened later.
+      const code = String((err && err.code) || '');
+      if (['AUTH_002', 'AUTH_003', 'AUTH_004'].includes(code)) {
+        await endStudentSession({
+          errorCode: code,
+          errorMessage: (err && err.message) || ''
+        });
+      }
+      // Network errors deliberately do NOT log the student out. The backend
+      // remains authoritative as soon as connectivity returns.
+    } finally {
+      sessionCheckInFlight = false;
+    }
+  }
+
+  function startStudentSessionHeartbeat() {
+    if (!isProtectedStudentPage() || !Storage.getToken()) return;
+
+    verifyStudentSessionNow();
+
+    sessionHeartbeatTimer = window.setInterval(
+      verifyStudentSessionNow,
+      SESSION_HEARTBEAT_MS
+    );
+
+    window.addEventListener('focus', verifyStudentSessionNow);
+    document.addEventListener('visibilitychange', () => {
+      if (!document.hidden) verifyStudentSessionNow();
+    });
+    window.addEventListener('online', verifyStudentSessionNow);
+
+    window.addEventListener('beforeunload', () => {
+      if (sessionHeartbeatTimer) window.clearInterval(sessionHeartbeatTimer);
+    }, { once: true });
+  }
+
+  function showStoredAuthNotice() {
+    if (Router.currentPageName() !== 'login.html') return;
+    if (Router.getQueryParam('reason') !== 'account-status') return;
+
+    const notice = Storage.get('auth_notice', null);
+    Storage.remove('auth_notice');
+
+    if (notice && notice.message && window.Notifications) {
+      Notifications.error(notice.message);
+    }
+  }
+
   function init() {
-    ensureThemeStylesheet();
-    ensureExperienceStylesheet();
     applySettings();
-
     if (!Router.guardAuthenticatedPage()) return;
-
-    ensureCanonicalSidebar();
-    ensureThemeOptions();
     wireCommonChrome();
-    updateThemeButtonLabels();
-    watchMidnightContrast();
-    watchStudentSurfaces();
-
     showOfflineIndicator();
     window.addEventListener('online', showOfflineIndicator);
     window.addEventListener('offline', showOfflineIndicator);
     registerServiceWorker();
 
+    // On login.html this consumes the one-time safe account-status message.
+    // On authenticated pages this starts immediate status/session enforcement.
+    showStoredAuthNotice();
+    startStudentSessionHeartbeat();
+
     document.dispatchEvent(new CustomEvent('wha:ready'));
   }
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
-  } else {
-    init();
-  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+  else init();
 })();
