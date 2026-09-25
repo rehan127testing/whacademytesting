@@ -187,6 +187,27 @@
     }, { once: true });
   }
 
+
+  function loadNotificationCenterAssets() {
+    if (!isProtectedStudentPage() || !Storage.getToken()) return;
+
+    if (!document.querySelector('link[data-wha-notification-center]')) {
+      const link = document.createElement('link');
+      link.rel = 'stylesheet';
+      link.href = 'assets/css/notifications-center.css?v=20260925';
+      link.setAttribute('data-wha-notification-center', '1');
+      document.head.appendChild(link);
+    }
+
+    if (!document.querySelector('script[data-wha-notification-center]')) {
+      const script = document.createElement('script');
+      script.src = 'assets/js/notifications-center.js?v=20260925';
+      script.async = true;
+      script.setAttribute('data-wha-notification-center', '1');
+      document.head.appendChild(script);
+    }
+  }
+
   function showStoredAuthNotice() {
     if (Router.currentPageName() !== 'login.html') return;
     if (Router.getQueryParam('reason') !== 'account-status') return;
@@ -212,6 +233,7 @@
     // On authenticated pages this starts immediate status/session enforcement.
     showStoredAuthNotice();
     startStudentSessionHeartbeat();
+    loadNotificationCenterAssets();
 
     document.dispatchEvent(new CustomEvent('wha:ready'));
   }
