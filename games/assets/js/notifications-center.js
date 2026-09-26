@@ -298,7 +298,16 @@
     if (panelOpen) render();
 
     try {
-      const payload = await Api.request('notifications/list', {});
+      const now = new Date();
+      const localDate = [
+        now.getFullYear(),
+        String(now.getMonth() + 1).padStart(2, '0'),
+        String(now.getDate()).padStart(2, '0')
+      ].join('-');
+      const payload = await Api.request('notifications/list', {
+        localDate,
+        timezoneOffsetMinutes: now.getTimezoneOffset()
+      });
       const normalized = normalizeListing(payload);
       maybeToastNewItems(normalized.notifications);
       state.notifications = normalized.notifications;
