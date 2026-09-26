@@ -355,3 +355,73 @@ body.wha-notification-open {
 }
 
 html[data-theme="midnight"] .wha-dashboard-notification-bell { color:#07111f; }
+
+
+/* STEP 18C — opt-in Web Push / closed-app device alerts */
+.wha-push-control {
+  padding: .8rem 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .85rem;
+  border-bottom: 1px solid var(--color-border, #e4e7ee);
+  background:
+    linear-gradient(0deg, rgba(99,102,241,.045), rgba(99,102,241,.045)),
+    var(--color-surface, #fff);
+}
+
+.wha-push-control[hidden] {
+  display: none !important;
+}
+
+.wha-push-control__copy {
+  min-width: 0;
+}
+
+.wha-push-control__copy strong {
+  display: block;
+  color: var(--color-text, #172033);
+  font-size: .82rem;
+}
+
+.wha-push-control__copy p {
+  margin: .18rem 0 0;
+  color: var(--color-text-secondary, #64748b);
+  font-size: .72rem;
+  line-height: 1.45;
+}
+
+.wha-push-toggle {
+  flex: 0 0 auto;
+  border: 1px solid color-mix(in srgb, var(--brand-primary) 45%, var(--color-border, #e4e7ee));
+  border-radius: .7rem;
+  padding: .55rem .72rem;
+  background: var(--brand-primary);
+  color: #fff;
+  font: inherit;
+  font-size: .72rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.wha-push-toggle:hover,
+.wha-push-toggle:focus-visible {
+  background: var(--brand-primary-mid);
+  outline: none;
+}
+
+.wha-push-toggle:disabled {
+  opacity: .55;
+  cursor: not-allowed;
+}
+
+@media (max-width: 640px) {
+  .wha-push-control {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .wha-push-toggle {
+    width: 100%;
+  }
+}

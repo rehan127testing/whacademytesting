@@ -22,7 +22,8 @@
     AccountStatus: 'Account',
     Broadcast: 'Announcement',
     BossResult: 'Boss Battle',
-    Recheck: 'Rechecking'
+    Recheck: 'Rechecking',
+    StreakReminder: 'Streak'
   };
 
   let state = {
@@ -35,6 +36,14 @@
   let panelOpen = false;
   let initialized = false;
   let initialSeenIds = new Set();
+
+  let pushState = {
+    supported: false,
+    permission: (typeof Notification !== 'undefined' ? Notification.permission : 'unsupported'),
+    subscribed: false,
+    loading: false,
+    loaded: false
+  };
 
   const bellSvg =
     '<svg viewBox="0 0 24 24" stroke-width="2" aria-hidden="true">' +
@@ -117,6 +126,171 @@
     updateBadges();
   }
 
+
+  function pushSupported() {
+    return 'serviceWorker' in navigator &&
+      'PushManager' in window &&
+      'Notification' in window &&
+      window.isSecureContext;
+  }
+
+  function base64UrlToUint8Array(value) {
+    const padding = '='.repeat((4 - (value.length % 4)) % 4);
+    const base64 = (value + padding).replace(/-/g, '+').replace(/_/g, '/');
+    const raw = atob(base64);
+    const out = new Uint8Array(raw.length);
+    for (let i = 0; i < raw.length; i += 1) out[i] = raw.charCodeAt(i);
+    return out;
+  }
+
+  function pushStatusText() {
+    if (!pushState.supported) return 'Device alerts are not supported in this browser.';
+    if (pushState.permission === 'denied') return 'Device alerts are blocked in browser settings.';
+    if (pushState.subscribed) return 'Device alerts are on — W.H. Academy can notify you even when the app is closed.';
+    if (pushState.permission === 'granted') return 'Permission is allowed. Turn on device alerts for this browser.';
+    return 'Turn on device alerts to receive important reminders when the app is closed.';
+  }
+
+  function renderPushControl() {
+    const card = document.getElementById('wha-push-control');
+    const status = document.getElementById('wha-push-status');
+    const button = document.getElementById('wha-push-toggle');
+    if (!card || !status || !button) return;
+
+    card.hidden = !pushState.supported && pushState.permission === 'unsupported';
+    status.textContent = pushStatusText();
+    button.disabled = pushState.loading || !pushState.supported || pushState.permission === 'denied';
+    button.textContent = pushState.loading
+      ? 'Please wait…'
+      : (pushState.subscribed ? 'Turn off device alerts' : 'Enable device alerts');
+  }
+
+  async function readBrowserPushSubscription() {
+    if (!pushSupported()) return null;
+    const registration = await navigator.serviceWorker.ready;
+    return registration.pushManager.getSubscription();
+  }
+
+  async function loadPushState() {
+    pushState.supported = pushSupported();
+    pushState.permission = pushState.supported ? Notification.permission : 'unsupported';
+    if (!pushState.supported) {
+      pushState.loaded = true;
+      renderPushControl();
+      return;
+    }
+
+    try {
+      const localSub = await readBrowserPushSubscription();
+      pushState.subscribed = !!localSub;
+
+      // If this browser already has a subscription but the backend lost it,
+      // re-sync it silently. No permission prompt occurs here.
+      if (localSub && navigator.onLine) {
+        const config = await Api.request('push/publicConfig', {});
+        if (!config || !config.subscribed) {
+          await Api.request('push/subscribe', {
+            subscription: localSub.toJSON(),
+            userAgent: navigator.userAgent || '',
+            platform: (navigator.userAgentData && navigator.userAgentData.platform) || navigator.platform || ''
+          });
+        }
+      }
+    } catch (_) {
+      // Push readiness must never break the in-app Notification Center.
+    } finally {
+      pushState.loaded = true;
+      renderPushControl();
+    }
+  }
+
+  async function enablePushFromUserGesture() {
+    if (pushState.loading || !pushSupported()) return;
+    pushState.loading = true;
+    renderPushControl();
+
+    try {
+      const permission = await Notification.requestPermission();
+      pushState.permission = permission;
+      if (permission !== 'granted') {
+        if (window.Notifications && typeof Notifications.toast === 'function') {
+          Notifications.toast(
+            permission === 'denied'
+              ? 'Device notifications are blocked in your browser settings.'
+              : 'Device notifications were not enabled.',
+            permission === 'denied' ? 'error' : 'info'
+          );
+        }
+        return;
+      }
+
+      const config = await Api.request('push/publicConfig', {});
+      const publicKey = String((config && config.vapidPublicKey) || '');
+      if (!publicKey) throw new Error('Push configuration is unavailable.');
+
+      const registration = await navigator.serviceWorker.ready;
+      let subscription = await registration.pushManager.getSubscription();
+      if (!subscription) {
+        subscription = await registration.pushManager.subscribe({
+          userVisibleOnly: true,
+          applicationServerKey: base64UrlToUint8Array(publicKey)
+        });
+      }
+
+      await Api.request('push/subscribe', {
+        subscription: subscription.toJSON(),
+        userAgent: navigator.userAgent || '',
+        platform: (navigator.userAgentData && navigator.userAgentData.platform) || navigator.platform || ''
+      });
+
+      pushState.subscribed = true;
+      if (window.Notifications && typeof Notifications.toast === 'function') {
+        Notifications.toast('Device alerts are now enabled for this browser.', 'success');
+      }
+    } catch (err) {
+      if (window.Notifications && typeof Notifications.toast === 'function') {
+        Notifications.toast((err && err.message) || 'Could not enable device alerts.', 'error');
+      }
+    } finally {
+      pushState.loading = false;
+      renderPushControl();
+    }
+  }
+
+  async function disablePushFromUserGesture() {
+    if (pushState.loading || !pushSupported()) return;
+    pushState.loading = true;
+    renderPushControl();
+
+    try {
+      const subscription = await readBrowserPushSubscription();
+      if (subscription) {
+        try {
+          await Api.request('push/unsubscribe', { endpoint: subscription.endpoint });
+        } finally {
+          await subscription.unsubscribe();
+        }
+      }
+
+      pushState.subscribed = false;
+      if (window.Notifications && typeof Notifications.toast === 'function') {
+        Notifications.toast('Device alerts are off for this browser.', 'success');
+      }
+    } catch (err) {
+      if (window.Notifications && typeof Notifications.toast === 'function') {
+        Notifications.toast((err && err.message) || 'Could not turn off device alerts.', 'error');
+      }
+    } finally {
+      pushState.loading = false;
+      renderPushControl();
+    }
+  }
+
+  async function togglePushFromUserGesture() {
+    if (pushState.subscribed) await disablePushFromUserGesture();
+    else await enablePushFromUserGesture();
+  }
+
   function ensurePanel() {
     if (document.getElementById('wha-notification-backdrop')) return;
 
@@ -147,6 +321,20 @@
 
     header.append(headingWrap, closeBtn);
 
+    const pushControl = el('div', 'wha-push-control');
+    pushControl.id = 'wha-push-control';
+    const pushCopy = el('div', 'wha-push-control__copy');
+    pushCopy.append(
+      el('strong', '', 'Device alerts'),
+      el('p', '', '')
+    );
+    pushCopy.querySelector('p').id = 'wha-push-status';
+    const pushToggle = el('button', 'wha-push-toggle', 'Enable device alerts');
+    pushToggle.type = 'button';
+    pushToggle.id = 'wha-push-toggle';
+    pushToggle.addEventListener('click', togglePushFromUserGesture);
+    pushControl.append(pushCopy, pushToggle);
+
     const toolbar = el('div', 'wha-notification-toolbar');
     const unreadText = el('span', 'wha-notification-toolbar__count', '');
     unreadText.id = 'wha-notification-unread-text';
@@ -160,7 +348,7 @@
     body.id = 'wha-notification-list';
     body.setAttribute('aria-live', 'polite');
 
-    panel.append(header, toolbar, body);
+    panel.append(header, pushControl, toolbar, body);
     backdrop.appendChild(panel);
     document.body.appendChild(backdrop);
   }
@@ -168,6 +356,7 @@
   function render() {
     ensurePanel();
     updateBadges();
+    renderPushControl();
 
     const list = document.getElementById('wha-notification-list');
     const unreadText = document.getElementById('wha-notification-unread-text');
@@ -422,6 +611,7 @@
     ensurePanel();
     render();
     refresh();
+    loadPushState();
     startPolling();
 
     document.addEventListener('keydown', (event) => {
