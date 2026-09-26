@@ -19,13 +19,26 @@
   let sessionRedirecting = false;
   let sessionHeartbeatTimer = null;
 
-  function applySettings() {
+  function applySettings(options) {
     const settings = Storage.getSettings();
     const root = document.documentElement;
     const theme = VALID_THEMES.indexOf(settings.theme) >= 0 ? settings.theme : 'light';
+    const instant = !options || options.instant !== false;
+
+    if (instant) root.classList.add('wha-theme-switching');
     root.setAttribute('data-theme', theme);
     root.setAttribute('data-text-size', settings.textSize || 'default');
+
+    if (instant) {
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => root.classList.remove('wha-theme-switching'));
+      });
+    }
   }
+
+  // Apply saved theme immediately when app.js executes so page navigation does
+  // not briefly paint the default/previous theme before normal bootstrap.
+  applySettings({ instant: true });
 
   function supportNavMarkup() {
     return '<svg viewBox="0 0 24 24" stroke-width="2" aria-hidden="true">' +
@@ -61,9 +74,15 @@
     if (themeToggle) {
       themeToggle.addEventListener('click', () => {
         const current = Storage.getSettings().theme;
-        const next = current === 'dark' ? 'light' : 'dark';
+        const currentIndex = VALID_THEMES.indexOf(current);
+        const nextIndex = currentIndex >= 0 ? (currentIndex + 1) % VALID_THEMES.length : 0;
+        const next = VALID_THEMES[nextIndex];
         Storage.setSettings({ theme: next });
-        applySettings();
+        applySettings({ instant: true });
+        document.querySelectorAll('[data-action="toggle-theme"]').forEach((button) => {
+          button.setAttribute('title', 'Theme: ' + next);
+          button.setAttribute('aria-label', 'Current theme ' + next + '. Switch to next theme');
+        });
       });
     }
     ensureSupportNav();
@@ -167,7 +186,7 @@
   }
 
   function startStudentSessionHeartbeat() {
-    if (!isProtectedStudentPage() || !Storage.getToken() || Router.currentPageName() !== 'dashboard.html') return;
+    if (!isProtectedStudentPage() || !Storage.getToken()) return;
 
     verifyStudentSessionNow();
 
@@ -189,7 +208,7 @@
 
 
   function loadNotificationCenterAssets() {
-    if (!isProtectedStudentPage() || !Storage.getToken()) return;
+    if (!isProtectedStudentPage() || !Storage.getToken() || Router.currentPageName() !== 'dashboard.html') return;
 
     if (!document.querySelector('link[data-wha-notification-center]')) {
       const link = document.createElement('link');

@@ -14,11 +14,11 @@
   height: 2.85rem;
   display: inline-grid;
   place-items: center;
-  border: 1px solid var(--color-border, rgba(148, 163, 184, .35));
+  border: 1px solid color-mix(in srgb, var(--brand-primary) 72%, #ffffff 28%);
   border-radius: 50%;
-  background: var(--color-surface, rgba(255,255,255,.96));
-  color: var(--color-text, #172033);
-  box-shadow: 0 8px 24px rgba(15, 23, 42, .12);
+  background: var(--brand-primary);
+  color: #ffffff;
+  box-shadow: 0 8px 24px var(--brand-glow, rgba(79, 70, 229, .28));
   cursor: pointer;
   pointer-events: auto;
   transition: transform 160ms ease, box-shadow 160ms ease, background 160ms ease;
@@ -27,8 +27,8 @@
 .wha-dashboard-notification-bell:hover,
 .wha-dashboard-notification-bell:focus-visible {
   transform: translateY(-1px);
-  background: var(--color-surface-hover, rgba(248,250,252,.98));
-  box-shadow: 0 10px 28px rgba(15, 23, 42, .16);
+  background: var(--brand-primary-mid);
+  box-shadow: 0 10px 28px var(--brand-glow, rgba(79, 70, 229, .34));
   outline: none;
 }
 
@@ -353,3 +353,5 @@ body.wha-notification-open {
     transition: none !important;
   }
 }
+
+html[data-theme="midnight"] .wha-dashboard-notification-bell { color:#07111f; }
