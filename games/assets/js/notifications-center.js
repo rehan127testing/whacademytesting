@@ -134,6 +134,18 @@
       window.isSecureContext;
   }
 
+  function browserTimezoneContext() {
+    let timezoneName = '';
+    try {
+      timezoneName = Intl.DateTimeFormat().resolvedOptions().timeZone || '';
+    } catch (_) {}
+
+    return {
+      timezoneName,
+      timezoneOffsetMinutes: new Date().getTimezoneOffset()
+    };
+  }
+
   function base64UrlToUint8Array(value) {
     const padding = '='.repeat((4 - (value.length % 4)) % 4);
     const base64 = (value + padding).replace(/-/g, '+').replace(/_/g, '/');
@@ -184,17 +196,17 @@
       const localSub = await readBrowserPushSubscription();
       pushState.subscribed = !!localSub;
 
-      // If this browser already has a subscription but the backend lost it,
-      // re-sync it silently. No permission prompt occurs here.
+      // Re-sync the existing subscription silently on dashboard load.
+      // This is idempotent and also refreshes timezone metadata needed by the
+      // automatic reminder scheduler. No permission prompt occurs here.
       if (localSub && navigator.onLine) {
-        const config = await Api.request('push/publicConfig', {});
-        if (!config || !config.subscribed) {
-          await Api.request('push/subscribe', {
-            subscription: localSub.toJSON(),
-            userAgent: navigator.userAgent || '',
-            platform: (navigator.userAgentData && navigator.userAgentData.platform) || navigator.platform || ''
-          });
-        }
+        await Api.request('push/publicConfig', {});
+        await Api.request('push/subscribe', {
+          subscription: localSub.toJSON(),
+          userAgent: navigator.userAgent || '',
+          platform: (navigator.userAgentData && navigator.userAgentData.platform) || navigator.platform || '',
+          ...browserTimezoneContext()
+        });
       }
     } catch (_) {
       // Push readiness must never break the in-app Notification Center.
@@ -240,7 +252,8 @@
       await Api.request('push/subscribe', {
         subscription: subscription.toJSON(),
         userAgent: navigator.userAgent || '',
-        platform: (navigator.userAgentData && navigator.userAgentData.platform) || navigator.platform || ''
+        platform: (navigator.userAgentData && navigator.userAgentData.platform) || navigator.platform || '',
+        ...browserTimezoneContext()
       });
 
       pushState.subscribed = true;
