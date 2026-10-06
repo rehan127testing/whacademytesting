@@ -20,7 +20,7 @@ const Auth = (() => {
     if (pin.length < 8 || pin.length > 16) return 'Your PIN must be 8–16 characters.';
     if (!/[0-9]/.test(pin)) return 'Your PIN must include at least one number.';
     if (!/[A-Za-z]/.test(pin)) return 'Your PIN must include at least one letter.';
-    if ((pin.match(/[^A-Za-z0-9]/g) || []).length < 2) return 'Your PIN must include at least two special characters.';
+    if ((pin.match(/[^A-Za-z0-9]/g) || []).length < 1) return 'Your PIN must include at least one special character.';
     return '';
   }
 

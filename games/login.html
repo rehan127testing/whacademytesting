@@ -197,7 +197,7 @@
               <li data-rule="len">8–16 characters</li>
               <li data-rule="num">At least 1 number</li>
               <li data-rule="alpha">At least 1 letter</li>
-              <li data-rule="special">At least 2 special characters (e.g. ! @ # $ %)</li>
+              <li data-rule="special">At least 1 special character (e.g. ! @ # $ %)</li>
               <li data-rule="match">Both PINs match</li>
             </ul>
           </div>
@@ -225,7 +225,7 @@
               <li data-rule="len">8–16 characters</li>
               <li data-rule="num">At least 1 number</li>
               <li data-rule="alpha">At least 1 letter</li>
-              <li data-rule="special">At least 2 special characters (e.g. ! @ # $ %)</li>
+              <li data-rule="special">At least 1 special character (e.g. ! @ # $ %)</li>
               <li data-rule="match">Both PINs match</li>
             </ul>
           </div>
@@ -276,7 +276,7 @@
           len: v.length>=8 && v.length<=16,
           num: /[0-9]/.test(v),
           alpha: /[A-Za-z]/.test(v),
-          special: (v.match(/[^A-Za-z0-9]/g)||[]).length>=2
+          special: (v.match(/[^A-Za-z0-9]/g)||[]).length>=1
         };
       }
       function wire(input){
