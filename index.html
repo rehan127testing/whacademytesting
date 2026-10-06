@@ -3870,8 +3870,8 @@
                     </a>
                     <!-- New students: open the enrollment form to get a Student ID -->
                     <a href="enroll.html"
-                       target="_blank" rel="noopener noreferrer" aria-label="Get a Student ID (new students - opens enrollment form)">
-                        <i class="fas fa-id-card" style="width:18px; margin-right:8px; color:#4f46e5;" aria-hidden="true"></i>Get Student ID
+                       target="_blank" rel="noopener noreferrer" aria-label="Register (new students - opens enrollment form)">
+                        <i class="fas fa-id-card" style="width:18px; margin-right:8px; color:#4f46e5;" aria-hidden="true"></i>Register
                     </a>
                     <!-- Everyone else: the existing games / account-creation instructions section -->
                     <a href="#learning-games" aria-label="How to create your account and start the games">
@@ -4509,7 +4509,7 @@
                                 Open the enrollment form
                             </div>
                             <div style="font-size:0.86rem; color:var(--text-muted); line-height:1.65;">
-                                Tap the <strong>Get Student ID</strong> button below. This opens the enrollment form.
+                                Tap the <strong>Register</strong> button below. This opens the enrollment form.
                             </div>
                         </div>
                     </div>
@@ -4741,7 +4741,7 @@
                             </a>
                             <a href="enroll.html"
                                target="_blank" rel="noopener noreferrer" class="btn btn-secondary">
-                                <i class="fas fa-id-card" aria-hidden="true"></i> Get Student ID
+                                <i class="fas fa-id-card" aria-hidden="true"></i> Register
                             </a>
                         </div>
 
@@ -4751,7 +4751,7 @@
                         </p>
                         <p style="font-size:0.86rem; color:var(--text-muted); line-height:1.6;">
                             <strong style="color:var(--text-dark);">First time here?</strong>
-                            You need to enroll first. Tap <em>Get Student ID</em> to open the enrollment form,
+                            You need to enroll first. Tap <em>Register</em> to open the enrollment form,
                             then follow the steps above to create your account.
                         </p>
 
@@ -6771,7 +6771,7 @@
         });
 
         // Mobile dropdown (Games) — tapping the top-level "Games" toggles its
-        // menu instead of jumping to the section, so Login / Get Student ID /
+        // menu instead of jumping to the section, so Login / Register /
         // How to Create Account are reachable straight from the top on phones.
         const gamesDropdown = document.getElementById('gamesDropdown');
         if (gamesDropdown) {
@@ -6817,7 +6817,7 @@
         // session token in localStorage under its own 'wha:' namespace, on the
         // same domain — so the homepage can tell whether someone is already
         // logged in. If they are, swap the menu to take them straight into
-        // their dashboard/games instead of showing "Login / Get Student ID".
+        // their dashboard/games instead of showing "Login / Register".
         (function () {
             if (!gamesDropdown) return;
             const menu = gamesDropdown.querySelector('.dropdown-menu');
@@ -6827,7 +6827,7 @@
                 const raw = window.localStorage.getItem('wha:session_token');
                 loggedIn = !!(raw && JSON.parse(raw));
             } catch (e) { loggedIn = false; }
-            if (!loggedIn) return; // not signed in → keep default Login / Get Student ID menu
+            if (!loggedIn) return; // not signed in → keep default Login / Register menu
 
             menu.innerHTML =
                 '<a href="games/dashboard.html" aria-label="Go to my dashboard">' +
