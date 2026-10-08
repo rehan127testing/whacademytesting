@@ -41,6 +41,11 @@
     .wha-pin-rules li::before { content:"○"; color:#cbd5e1; font-weight:700; font-size:.9em; }
     .wha-pin-rules li.ok { color:#16a34a; }
     .wha-pin-rules li.ok::before { content:"✓"; color:#16a34a; }
+    .wha-eye-wrap { position:relative; }
+    .wha-eye-wrap input { padding-right:44px !important; }
+    .wha-eye-btn { position:absolute; top:50%; right:8px; transform:translateY(-50%); width:30px; height:30px; display:flex; align-items:center; justify-content:center; background:transparent; border:0; cursor:pointer; color:#64748b; padding:0; border-radius:6px; }
+    .wha-eye-btn:hover { color:#334155; background:rgba(100,116,139,.1); }
+    .wha-eye-btn svg { width:19px; height:19px; pointer-events:none; }
   </style>
 </head>
 <body>
@@ -62,7 +67,7 @@
           </div>
           <div class="field" data-field="pin">
             <label class="field__label" for="login-pin">PIN</label>
-            <input class="input" id="login-pin" name="pin" type="password" autocomplete="current-password"
+            <input class="input" id="login-pin" data-eye name="pin" type="password" autocomplete="current-password"
                    minlength="8" maxlength="16" required aria-describedby="login-pin-error">
             <p class="field__error" id="login-pin-error" role="alert"></p>
           </div>
@@ -192,7 +197,7 @@
 
           <div class="field">
             <label class="field__label" for="new-pin">New PIN</label>
-            <input class="input input--pin wha-pin-input" id="new-pin" name="pin" type="password" autocomplete="new-password" minlength="8" maxlength="16" required data-rules="#new-pin-rules" data-confirm="#confirm-pin">
+            <input class="input input--pin wha-pin-input" id="new-pin" data-eye name="pin" type="password" autocomplete="new-password" minlength="8" maxlength="16" required data-rules="#new-pin-rules" data-confirm="#confirm-pin">
             <ul class="wha-pin-rules" id="new-pin-rules">
               <li data-rule="len">8–16 characters</li>
               <li data-rule="num">At least 1 number</li>
@@ -203,7 +208,7 @@
           </div>
           <div class="field">
             <label class="field__label" for="confirm-pin">Confirm PIN</label>
-            <input class="input input--pin wha-pin-confirm" id="confirm-pin" name="confirmPin" type="password" autocomplete="new-password" minlength="8" maxlength="16" required>
+            <input class="input input--pin wha-pin-confirm" id="confirm-pin" data-eye name="confirmPin" type="password" autocomplete="new-password" minlength="8" maxlength="16" required>
           </div>
           <div id="setpin-captcha" class="wha-captcha" style="margin: var(--space-3) 0;"></div>
           <button type="submit" class="btn btn--primary btn--full btn--lg">
@@ -220,7 +225,7 @@
         <form id="set-new-pin-form" novalidate>
           <div class="field">
             <label class="field__label" for="reset-new-pin">New PIN</label>
-            <input class="input input--pin wha-pin-input" id="reset-new-pin" name="pin" type="password" autocomplete="new-password" minlength="8" maxlength="16" required data-rules="#reset-pin-rules" data-confirm="#reset-confirm-pin">
+            <input class="input input--pin wha-pin-input" id="reset-new-pin" data-eye name="pin" type="password" autocomplete="new-password" minlength="8" maxlength="16" required data-rules="#reset-pin-rules" data-confirm="#reset-confirm-pin">
             <ul class="wha-pin-rules" id="reset-pin-rules">
               <li data-rule="len">8–16 characters</li>
               <li data-rule="num">At least 1 number</li>
@@ -231,7 +236,7 @@
           </div>
           <div class="field">
             <label class="field__label" for="reset-confirm-pin">Confirm PIN</label>
-            <input class="input input--pin wha-pin-confirm" id="reset-confirm-pin" name="confirmPin" type="password" autocomplete="new-password" minlength="8" maxlength="16" required>
+            <input class="input input--pin wha-pin-confirm" id="reset-confirm-pin" data-eye name="confirmPin" type="password" autocomplete="new-password" minlength="8" maxlength="16" required>
           </div>
           <button type="submit" class="btn btn--primary btn--full btn--lg">
             <span class="btn__label">Save New PIN</span>
@@ -306,6 +311,26 @@
         if(confirm) confirm.addEventListener('input', update);
       }
       document.querySelectorAll('[data-rules]').forEach(wire);
+      // show/hide PIN toggle (eye) on every data-eye field
+      (function(){
+        var EYE='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>';
+        var EYEOFF='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>';
+        document.querySelectorAll('input[data-eye]').forEach(function(inp){
+          if(inp.parentNode.classList.contains('wha-eye-wrap')) return;
+          var wrap=document.createElement('div'); wrap.className='wha-eye-wrap';
+          inp.parentNode.insertBefore(wrap, inp); wrap.appendChild(inp);
+          var btn=document.createElement('button'); btn.type='button'; btn.className='wha-eye-btn';
+          btn.setAttribute('aria-label','Show PIN'); btn.innerHTML=EYE;
+          btn.addEventListener('click', function(){
+            var show = inp.type==='password';
+            inp.type = show ? 'text' : 'password';
+            btn.innerHTML = show ? EYEOFF : EYE;
+            btn.setAttribute('aria-label', show ? 'Hide PIN' : 'Show PIN');
+            inp.focus();
+          });
+          wrap.appendChild(btn);
+        });
+      })();
     })();
   </script>
 </body>
